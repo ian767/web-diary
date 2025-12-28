@@ -34,12 +34,12 @@ const upload = multer({
 // GET /api/diary/search?q=keyword&from=YYYY-MM-DD&to=YYYY-MM-DD&mood=happy&tags=tag1,tag2&limit=20&offset=0
 router.get('/search', authenticateToken, async (req, res) => {
   try {
-    const { q, from, to, mood, tags, limit = 20, offset = 0 } = req.query;
+    const { q, from, to, mood, tags, favorite, category_id, limit = 20, offset = 0 } = req.query;
     const userId = req.user.id;
     const pool = database.getPool();
 
     // Build query with filters
-    let query = 'SELECT id, date as entry_date, title, mood, tags, content_text FROM diary_entries WHERE user_id = $1';
+    let query = 'SELECT id, date as entry_date, title, mood, tags, content_text, is_favorite, category_id FROM diary_entries WHERE user_id = $1';
     const params = [userId];
     let paramIndex = 2;
 
@@ -99,6 +99,18 @@ router.get('/search', authenticateToken, async (req, res) => {
         });
         query += `)`;
       }
+    }
+
+    // Phase 3A: Favorites filter
+    if (favorite === 'true' || favorite === true) {
+      query += ` AND is_favorite = true`;
+    }
+
+    // Phase 3A: Category filter
+    if (category_id) {
+      query += ` AND category_id = $${paramIndex}`;
+      params.push(parseInt(category_id, 10));
+      paramIndex++;
     }
 
     // Get total count (before pagination)
@@ -226,7 +238,7 @@ router.get('/search', authenticateToken, async (req, res) => {
 // Get diary entries with filters (daily, weekly, monthly, yearly)
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { view, date, startDate, endDate, mood, weather, tags } = req.query;
+    const { view, date, startDate, endDate, mood, weather, tags, favorite, category_id } = req.query;
     const userId = req.user.id;
     const pool = database.getPool();
     
@@ -269,6 +281,18 @@ router.get('/', authenticateToken, async (req, res) => {
     if (tags) {
       query += ` AND tags LIKE $${paramIndex}`;
       params.push(`%${tags}%`);
+      paramIndex++;
+    }
+    
+    // Phase 3A: Favorites filter
+    if (favorite === 'true' || favorite === true) {
+      query += ` AND is_favorite = true`;
+    }
+    
+    // Phase 3A: Category filter
+    if (category_id) {
+      query += ` AND category_id = $${paramIndex}`;
+      params.push(parseInt(category_id, 10));
       paramIndex++;
     }
 

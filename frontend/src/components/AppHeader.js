@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeSelector from './ThemeSelector';
-import { getUser, removeAuthToken } from '../utils/auth';
+import { removeAuthToken } from '../utils/auth';
 import './AppHeader.css';
 
 /**
@@ -51,4 +51,5 @@ const AppHeader = ({ user, onLogout }) => {
 };
 
 export default AppHeader;
+
 

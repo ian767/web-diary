@@ -49,16 +49,27 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
 
   // Phase 3A: Load categories for selector
   const [categories, setCategories] = useState([]);
+  const loadCategories = async () => {
+    try {
+      const response = await categoriesAPI.getCategories();
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+  
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const response = await categoriesAPI.getCategories();
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error loading categories:', error);
-      }
-    };
     loadCategories();
+    
+    // Listen for category updates from CategoryManager
+    const handleCategoriesUpdated = () => {
+      loadCategories();
+    };
+    window.addEventListener('categoriesUpdated', handleCategoriesUpdated);
+    
+    return () => {
+      window.removeEventListener('categoriesUpdated', handleCategoriesUpdated);
+    };
   }, []);
   const [files, setFiles] = useState([]); // New files to upload
   const [existingAttachments, setExistingAttachments] = useState(

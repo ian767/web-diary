@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import Logo from './Logo';
-import { diaryAPI } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { diaryAPI, categoriesAPI } from '../services/api';
 import './Search.css';
 
 /**
@@ -16,11 +15,37 @@ const Search = () => {
   const [toDate, setToDate] = useState('');
   const [mood, setMood] = useState('');
   const [tags, setTags] = useState('');
+  const [favorite, setFavorite] = useState(false);
+  const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [total, setTotal] = useState(0);
   const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  // Load categories on mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await categoriesAPI.getCategories();
+        setCategories(response.data || []);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    };
+    loadCategories();
+    
+    // Listen for category updates
+    const handleCategoriesUpdated = () => {
+      loadCategories();
+    };
+    window.addEventListener('categoriesUpdated', handleCategoriesUpdated);
+    
+    return () => {
+      window.removeEventListener('categoriesUpdated', handleCategoriesUpdated);
+    };
+  }, []);
 
   // Debounce search query (300ms delay)
   useEffect(() => {
@@ -34,7 +59,7 @@ const Search = () => {
   // Perform search when filters change
   const performSearch = useCallback(async () => {
     // Don't search if no query and no filters
-    if (!debouncedQuery.trim() && !fromDate && !toDate && !mood && !tags.trim()) {
+    if (!debouncedQuery.trim() && !fromDate && !toDate && !mood && !tags.trim() && !favorite && !categoryId) {
       setResults([]);
       setTotal(0);
       return;
@@ -50,6 +75,8 @@ const Search = () => {
         to: toDate || undefined,
         mood: mood || undefined,
         tags: tags.trim() || undefined,
+        favorite: favorite ? 'true' : undefined,
+        category_id: categoryId || undefined,
         limit: 20,
         offset: 0,
       };
@@ -67,7 +94,7 @@ const Search = () => {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, fromDate, toDate, mood, tags]);
+  }, [debouncedQuery, fromDate, toDate, mood, tags, favorite, categoryId]);
 
   // Trigger search when filters change
   useEffect(() => {
@@ -85,6 +112,8 @@ const Search = () => {
     setToDate('');
     setMood('');
     setTags('');
+    setFavorite(false);
+    setCategoryId('');
   };
 
   return (
@@ -158,6 +187,34 @@ const Search = () => {
               className="filter-input"
             />
           </div>
+
+          <div className="filter-group">
+            <label htmlFor="favorite-filter" className="checkbox-label">
+              <input
+                id="favorite-filter"
+                type="checkbox"
+                checked={favorite}
+                onChange={(e) => setFavorite(e.target.checked)}
+                className="filter-checkbox"
+              />
+              <span>Favorites only</span>
+            </label>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="category-filter">Category</label>
+            <select
+              id="category-filter"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="filter-input"
+            >
+              <option value="">All categories</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <button onClick={clearFilters} className="clear-filters-btn">
@@ -211,7 +268,7 @@ const Search = () => {
                 ))}
               </div>
             </>
-          ) : debouncedQuery || fromDate || toDate || mood || tags ? (
+          ) : debouncedQuery || fromDate || toDate || mood || tags || favorite || categoryId ? (
             <div className="search-empty">No entries found matching your search criteria.</div>
           ) : null}
         </div>

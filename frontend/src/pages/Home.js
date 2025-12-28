@@ -17,6 +17,7 @@ import RichTextDisplay from '../components/RichTextDisplay';
 import MobileDrawer from '../components/MobileDrawer';
 import MobileViewSelector from '../components/MobileViewSelector';
 import MobileActionBar from '../components/MobileActionBar';
+import CategoryManager from '../components/CategoryManager';
 import { diaryAPI, tasksAPI } from '../services/api';
 import './Home.css';
 import './CalendarDarkMode.css';
@@ -41,7 +42,8 @@ const Home = () => {
     mood: '',
     location: '',
     weather: '',
-    tags: ''
+    tags: '',
+    favorite: false
   });
   // Lightbox state for Home page photos
   const [lightboxImages, setLightboxImages] = useState(null);
@@ -278,6 +280,10 @@ const Home = () => {
         filteredEntries = filteredEntries.filter(entry => 
           entry.tags && searchTags.some(searchTag => entry.tags.toLowerCase().includes(searchTag))
         );
+      }
+      // Phase 3A: Favorites filter
+      if (filters.favorite) {
+        filteredEntries = filteredEntries.filter(entry => entry.is_favorite === true);
       }
 
       setEntries(filteredEntries);
@@ -595,10 +601,10 @@ const Home = () => {
             <div className="navigation-group">
               <div className="navigation-group-header">
                 <div className="navigation-group-title">Filters</div>
-                {(filters.mood || filters.weather || filters.tags) && (
+                {(filters.mood || filters.weather || filters.tags || filters.favorite) && (
                   <button
                     type="button"
-                    onClick={() => setFilters({ mood: '', location: '', weather: '', tags: '' })}
+                    onClick={() => setFilters({ mood: '', location: '', weather: '', tags: '', favorite: false })}
                     className="clear-filters-btn"
                     title="Clear all filters"
                   >
@@ -668,6 +674,20 @@ const Home = () => {
                   className="navigation-select"
                 />
               </div>
+              <div className="navigation-filter-item">
+                <label htmlFor="favorite-filter" className="checkbox-label">
+                  <input
+                    id="favorite-filter"
+                    type="checkbox"
+                    checked={filters.favorite}
+                    onChange={(e) => {
+                      setFilters({ ...filters, favorite: e.target.checked });
+                    }}
+                    className="navigation-checkbox"
+                  />
+                  <span>⭐ Favorites only</span>
+                </label>
+              </div>
             </div>
             <div className="navigation-group">
               <div className="navigation-group-title">Tools</div>
@@ -675,6 +695,9 @@ const Home = () => {
                 Coming soon: Metrics, Database, Export...
               </div>
             </div>
+            
+            {/* Phase 3A: Category Management */}
+            <CategoryManager />
           </div>
         )}
       </div>

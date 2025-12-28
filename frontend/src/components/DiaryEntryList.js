@@ -99,19 +99,33 @@ const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily',
     return entry.attachments?.filter(a => a.type === 'photo').length || 0;
   };
 
-  // Phase 3A: Handle favorite toggle
+  // Phase 3A: Handle favorite toggle with optimistic updates
   const handleFavoriteToggle = async (e, entry) => {
     e.stopPropagation(); // Prevent expanding entry when clicking star
+    
+    // Optimistic update: flip the favorite state immediately
+    const previousFavoriteState = entry.is_favorite;
+    const newFavoriteState = !previousFavoriteState;
+    
+    // Update UI immediately (optimistic)
+    if (onEntryUpdate) {
+      onEntryUpdate(entry.id, { is_favorite: newFavoriteState });
+    }
+    // Also update entry in entries array for immediate visual feedback
+    entry.is_favorite = newFavoriteState;
+    
     try {
+      // Then sync with backend
       await diaryAPI.toggleFavorite(entry.id);
-      // Update local entry state
-      if (onEntryUpdate) {
-        onEntryUpdate(entry.id, { is_favorite: !entry.is_favorite });
-      }
-      // Also update entry in entries array if parent manages it
-      entry.is_favorite = !entry.is_favorite;
     } catch (error) {
       console.error('Error toggling favorite:', error);
+      // Revert on error
+      if (onEntryUpdate) {
+        onEntryUpdate(entry.id, { is_favorite: previousFavoriteState });
+      }
+      entry.is_favorite = previousFavoriteState;
+      // Optionally show error message to user
+      alert('Failed to update favorite status. Please try again.');
     }
   };
 

@@ -15,7 +15,6 @@ import './App.css';
 function App() {
   const [user, setUserState] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [homeNavigateRef, setHomeNavigateRef] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {

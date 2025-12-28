@@ -1,0 +1,149 @@
+.category-manager {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  padding-top: 1rem;
+}
+
+.category-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.category-manager-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.category-manager-toggle {
+  background: transparent;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.category-manager-toggle:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.category-manager-content {
+  margin-top: 0.5rem;
+}
+
+.category-manager-error {
+  color: var(--error-color, #d32f2f);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: var(--error-bg, rgba(211, 47, 47, 0.1));
+  border-radius: 4px;
+}
+
+.category-create-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.category-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.category-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.category-add-btn {
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.category-add-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.category-add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.category-loading,
+.category-empty {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.02));
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.category-item:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.category-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.category-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background 0.2s ease, color 0.2s ease;
+  line-height: 1;
+  min-width: 28px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-delete-btn:hover {
+  background: var(--error-bg, rgba(211, 47, 47, 0.1));
+  color: var(--error-color, #d32f2f);
+}
+
