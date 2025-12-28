@@ -84,8 +84,15 @@ const Search = () => {
       // Remove undefined values
       Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
 
-      // Debug logging
-      console.log('Searching with params:', params);
+      // Debug logging - show final params and request URL
+      console.log('Search component - Final params object:', params);
+      const queryString = new URLSearchParams();
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+          queryString.append(key, params[key]);
+        }
+      });
+      console.log('Search component - Request URL will be: /api/diary/search?' + queryString.toString());
 
       const response = await diaryAPI.searchEntries(params);
       setResults(response.data.results || []);
@@ -249,7 +256,7 @@ const Search = () => {
                       </h3>
                       <span className="result-date">{result.entry_date}</span>
                     </div>
-                    {result.snippet && (
+                    {result.snippet && result.snippet.trim() && (
                       <p className="result-snippet" dangerouslySetInnerHTML={{ __html: result.snippet }} />
                     )}
                     <div className="result-meta">

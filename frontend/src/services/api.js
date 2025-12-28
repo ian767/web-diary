@@ -131,9 +131,14 @@ export const diaryAPI = {
         if (params.to) queryParams.append('to', params.to);
         if (params.mood) queryParams.append('mood', params.mood);
         if (params.tags) queryParams.append('tags', params.tags);
+        // Phase 3A: Add favorite and category_id filters
+        if (params.favorite) queryParams.append('favorite', params.favorite);
+        if (params.category_id) queryParams.append('category_id', params.category_id);
         if (params.limit) queryParams.append('limit', params.limit);
         if (params.offset) queryParams.append('offset', params.offset);
-        return api.get(`/api/diary/search?${queryParams.toString()}`);
+        const url = `/api/diary/search?${queryParams.toString()}`;
+        console.log('Search API request URL:', url);
+        return api.get(url);
       },
     };
 

@@ -248,8 +248,15 @@ const Home = () => {
         entriesParams.category_id = filters.category_id;
       }
 
-      // Debug logging
-      console.log('Loading entries with params:', entriesParams);
+      // Debug logging - show final params and request URL
+      console.log('Home loadData - Final params object:', entriesParams);
+      const queryString = new URLSearchParams();
+      Object.keys(entriesParams).forEach(key => {
+        if (entriesParams[key] !== undefined && entriesParams[key] !== null && entriesParams[key] !== '') {
+          queryString.append(key, entriesParams[key]);
+        }
+      });
+      console.log('Home loadData - Request URL will be: /api/diary?' + queryString.toString());
 
       const [entriesRes, tasksRes] = await Promise.all([
         diaryAPI.getEntries(entriesParams),

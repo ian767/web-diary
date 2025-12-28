@@ -102,18 +102,32 @@ router.get('/search', authenticateToken, async (req, res) => {
     }
 
     // Phase 3A: Favorites filter
-    if (favorite === 'true' || favorite === true || favorite === '1') {
+    // Accept 'true', true, '1', or 'True' as true
+    const isFavoriteFilter = favorite === 'true' || favorite === true || favorite === '1' || favorite === 'True';
+    if (isFavoriteFilter) {
       query += ` AND is_favorite = true`;
-      console.log('Applied favorites filter: is_favorite = true');
+      console.log('[SEARCH] Applied favorites filter: is_favorite = true');
+    } else {
+      console.log('[SEARCH] No favorites filter (favorite param:', favorite, ')');
     }
 
     // Phase 3A: Category filter
-    if (category_id) {
-      query += ` AND category_id = $${paramIndex}`;
-      params.push(parseInt(category_id, 10));
-      paramIndex++;
-      console.log('Applied category filter: category_id =', category_id);
+    if (category_id && category_id !== '' && category_id !== 'undefined') {
+      const categoryIdInt = parseInt(category_id, 10);
+      if (!isNaN(categoryIdInt)) {
+        query += ` AND category_id = $${paramIndex}`;
+        params.push(categoryIdInt);
+        paramIndex++;
+        console.log('[SEARCH] Applied category filter: category_id =', categoryIdInt);
+      } else {
+        console.log('[SEARCH] Invalid category_id:', category_id);
+      }
+    } else {
+      console.log('[SEARCH] No category filter (category_id param:', category_id, ')');
     }
+    
+    console.log('[SEARCH] Final query:', query);
+    console.log('[SEARCH] Final params:', params);
 
     // Get total count (before pagination)
     const countQuery = query.replace(/SELECT.*?FROM/, 'SELECT COUNT(*) as total FROM');
@@ -216,7 +230,7 @@ router.get('/search', authenticateToken, async (req, res) => {
         id: entry.id,
         entry_date: entry.entry_date,
         title: entry.title,
-        snippet: snippet.trim(),
+        snippet: (snippet || '').trim() || '', // Ensure snippet is never undefined
         mood: entry.mood,
         tags: entry.tags,
         is_favorite: entry.is_favorite || false,
@@ -287,18 +301,32 @@ router.get('/', authenticateToken, async (req, res) => {
     }
     
     // Phase 3A: Favorites filter
-    if (favorite === 'true' || favorite === true || favorite === '1') {
+    // Accept 'true', true, '1', or 'True' as true
+    const isFavoriteFilter = favorite === 'true' || favorite === true || favorite === '1' || favorite === 'True';
+    if (isFavoriteFilter) {
       query += ` AND is_favorite = true`;
-      console.log('Applied favorites filter: is_favorite = true');
+      console.log('[LIST] Applied favorites filter: is_favorite = true');
+    } else {
+      console.log('[LIST] No favorites filter (favorite param:', favorite, ')');
     }
     
     // Phase 3A: Category filter
-    if (category_id) {
-      query += ` AND category_id = $${paramIndex}`;
-      params.push(parseInt(category_id, 10));
-      paramIndex++;
-      console.log('Applied category filter: category_id =', category_id);
+    if (category_id && category_id !== '' && category_id !== 'undefined') {
+      const categoryIdInt = parseInt(category_id, 10);
+      if (!isNaN(categoryIdInt)) {
+        query += ` AND category_id = $${paramIndex}`;
+        params.push(categoryIdInt);
+        paramIndex++;
+        console.log('[LIST] Applied category filter: category_id =', categoryIdInt);
+      } else {
+        console.log('[LIST] Invalid category_id:', category_id);
+      }
+    } else {
+      console.log('[LIST] No category filter (category_id param:', category_id, ')');
     }
+    
+    console.log('[LIST] Final query:', query);
+    console.log('[LIST] Final params:', params);
 
     query += ' ORDER BY date DESC, created_at DESC';
 
