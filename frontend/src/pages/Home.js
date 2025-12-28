@@ -731,6 +731,13 @@ const Home = ({ onNavigateRef }) => {
           >
             Yearly
           </button>
+          <button
+            onClick={() => navigate('/search')}
+            className="search-nav-btn"
+            title="Search"
+          >
+            🔍 Search
+          </button>
         </div>
       </div>
 
