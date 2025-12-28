@@ -51,6 +51,8 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   // Mobile drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Categories for filter dropdown
+  const [categories, setCategories] = useState([]);
 
   // Listen for drawer toggle from header hamburger button
   useEffect(() => {
