@@ -42,10 +42,10 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
   register: (username, email, password) =>
-    api.post('/auth/register', { username, email, password }),
+    api.post('/api/auth/register', { username, email, password }),
   login: (username, password) =>
-    api.post('/auth/login', { username, password }),
-  verify: () => api.get('/auth/verify'),
+    api.post('/api/auth/login', { username, password }),
+  verify: () => api.get('/api/auth/verify'),
 };
 
 // Diary API
