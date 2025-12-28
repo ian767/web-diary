@@ -4,60 +4,8 @@
   box-sizing: border-box;
 }
 
-:root,
-[data-theme="light"] {
-  /* Light theme colors (default) */
-  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-secondary: rgba(255, 255, 255, 0.95);
-  --bg-tertiary: rgba(255, 255, 255, 0.9);
-  --bg-hover: rgba(102, 126, 234, 0.1);
-  --text-primary: #333;
-  --text-secondary: #666;
-  --text-muted: #999;
-  --border-color: #e0e0e0;
-  --shadow: rgba(0, 0, 0, 0.1);
-  --shadow-hover: rgba(0, 0, 0, 0.15);
-  --accent: #667eea;
-  --accent-hover: #5568d3;
-  --error: #e74c3c;
-  --success: #27ae60;
-}
-
-[data-theme="dark"] {
-  /* Dark theme colors */
-  --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  --bg-secondary: rgba(30, 30, 46, 0.95);
-  --bg-tertiary: rgba(40, 40, 56, 0.9);
-  --bg-hover: rgba(102, 126, 234, 0.2);
-  --text-primary: #e0e0e0;
-  --text-secondary: #b0b0b0;
-  --text-muted: #808080;
-  --border-color: #404040;
-  --shadow: rgba(0, 0, 0, 0.3);
-  --shadow-hover: rgba(0, 0, 0, 0.4);
-  --accent: #667eea;
-  --accent-hover: #7c8ef5;
-  --error: #ff6b6b;
-  --success: #51cf66;
-}
-
-[data-theme="indigo"] {
-  /* Indigo theme colors */
-  --bg-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  --bg-secondary: rgba(255, 255, 255, 0.95);
-  --bg-tertiary: rgba(255, 255, 255, 0.9);
-  --bg-hover: rgba(79, 70, 229, 0.1);
-  --text-primary: #1e293b;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-color: #cbd5e1;
-  --shadow: rgba(79, 70, 229, 0.1);
-  --shadow-hover: rgba(79, 70, 229, 0.15);
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --error: #ef4444;
-  --success: #10b981;
-}
+/* Theme definitions are now centralized in /src/styles/themes.css */
+/* Import themes after base styles */
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

@@ -79,18 +79,18 @@
   font-size: 0.9375rem;
   line-height: 1.6;
   min-height: 200px;
-  color: #333;
-  background: #fff; /* White background for readability */
+  color: var(--editor-text, #333);
+  background: var(--editor-bg, #fff); /* Theme-aware editor background for readability */
 }
 
 .content-with-stickers .ql-editor {
   min-height: 200px;
-  color: #333; /* Dark text for contrast */
-  background: #fff; /* White background for readability */
+  color: var(--editor-text, #333); /* Theme-aware text color */
+  background: var(--editor-bg, #fff); /* Theme-aware background for readability */
 }
 
 .content-with-stickers .ql-editor.ql-blank::before {
-  color: #999; /* Placeholder text color */
+  color: var(--editor-placeholder, #999); /* Theme-aware placeholder color */
   font-style: normal;
 }
 

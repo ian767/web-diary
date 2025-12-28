@@ -1,0 +1,115 @@
+/**
+ * Theme System
+ * 
+ * This file centralizes all theme definitions using CSS custom properties (variables).
+ * Themes are applied via the data-theme attribute on the document root.
+ * 
+ * Architecture for future "Theme Shop":
+ * - Additional theme packs can be added here or in separate theme pack files
+ * - Each theme should define all CSS variables used throughout the app
+ * - Theme shop will dynamically load theme definitions and apply them
+ * 
+ * TODO: When implementing Theme Shop, consider:
+ * - Loading theme definitions from a theme registry/API
+ * - Allowing users to preview themes before applying
+ * - Supporting custom theme creation
+ * - Theme pack structure: { id, name, displayName, variables: {...} }
+ */
+
+/* Default theme: Light (Daylight) */
+:root,
+[data-theme="light"] {
+  /* Background colors */
+  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.95);
+  --bg-tertiary: rgba(255, 255, 255, 0.9);
+  --bg-hover: rgba(102, 126, 234, 0.1);
+  
+  /* Text colors */
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-muted: #999;
+  
+  /* UI elements */
+  --border-color: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+  
+  /* Accent colors */
+  --accent: #667eea;
+  --accent-hover: #5568d3;
+  
+  /* Status colors */
+  --error: #e74c3c;
+  --success: #27ae60;
+  
+  /* Editor specific (always readable) */
+  --editor-bg: #ffffff;
+  --editor-text: #333333;
+  --editor-placeholder: #999999;
+}
+
+/* Warm theme: Sunset (paper-like / sunset tones) */
+[data-theme="warm"] {
+  /* Background colors - warm, paper-like tones */
+  --bg-primary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --bg-secondary: rgba(255, 248, 240, 0.95);
+  --bg-tertiary: rgba(255, 245, 235, 0.9);
+  --bg-hover: rgba(245, 87, 108, 0.1);
+  
+  /* Text colors - warm browns */
+  --text-primary: #3d2817;
+  --text-secondary: #6b4e3d;
+  --text-muted: #8b6f5e;
+  
+  /* UI elements */
+  --border-color: #e8d5c4;
+  --shadow: rgba(61, 40, 23, 0.1);
+  --shadow-hover: rgba(61, 40, 23, 0.15);
+  
+  /* Accent colors - sunset orange/pink */
+  --accent: #f5576c;
+  --accent-hover: #e0455a;
+  
+  /* Status colors */
+  --error: #d63031;
+  --success: #00b894;
+  
+  /* Editor specific (always readable) */
+  --editor-bg: #fffef9;
+  --editor-text: #3d2817;
+  --editor-placeholder: #8b6f5e;
+}
+
+/* Dark theme: Midnight */
+[data-theme="dark"] {
+  /* Background colors - dark, midnight tones */
+  --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --bg-secondary: rgba(30, 30, 46, 0.95);
+  --bg-tertiary: rgba(40, 40, 56, 0.9);
+  --bg-hover: rgba(102, 126, 234, 0.2);
+  
+  /* Text colors - light grays */
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  
+  /* UI elements */
+  --border-color: #404040;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+  
+  /* Accent colors */
+  --accent: #667eea;
+  --accent-hover: #7c8ef5;
+  
+  /* Status colors */
+  --error: #ff6b6b;
+  --success: #51cf66;
+  
+  /* Editor specific (always readable) */
+  --editor-bg: #1e1e1e;
+  --editor-text: #e0e0e0;
+  --editor-placeholder: #808080;
+}
+

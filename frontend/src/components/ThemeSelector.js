@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import './ThemeSelector.css';
 
+/**
+ * Theme Selector Component
+ * 
+ * Provides a simple UI for selecting between built-in themes.
+ * Architecture supports future "Theme Shop" expansion:
+ * - Themes are defined in /src/styles/themes.css
+ * - Theme selection is persisted in localStorage with key "theme"
+ * - Future: Theme Shop will allow loading additional theme packs
+ */
 const ThemeSelector = () => {
+  // Theme definitions with user-friendly display names
+  const themes = [
+    { id: 'light', name: 'Daylight', description: 'Light theme' },
+    { id: 'warm', name: 'Sunset', description: 'Warm, paper-like theme' },
+    { id: 'dark', name: 'Midnight', description: 'Dark theme' },
+  ];
+
   const [theme, setTheme] = useState(() => {
     // Get theme from localStorage or default to 'light'
-    return localStorage.getItem('app-theme') || 'light';
+    // Key: "theme" (for future Theme Shop compatibility)
+    return localStorage.getItem('theme') || 'light';
   });
 
   useEffect(() => {
-    // Apply theme to document body
+    // Apply theme to document root
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('app-theme', theme);
+    // Persist selection (key: "theme" for Theme Shop compatibility)
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const handleThemeChange = (newTheme) => {
@@ -21,27 +39,16 @@ const ThemeSelector = () => {
     <div className="theme-selector">
       <label className="theme-selector-label">Theme:</label>
       <div className="theme-options">
-        <button
-          className={`theme-option ${theme === 'light' ? 'active' : ''}`}
-          onClick={() => handleThemeChange('light')}
-          title="Light Theme"
-        >
-          Light
-        </button>
-        <button
-          className={`theme-option ${theme === 'dark' ? 'active' : ''}`}
-          onClick={() => handleThemeChange('dark')}
-          title="Dark Theme"
-        >
-          Dark
-        </button>
-        <button
-          className={`theme-option ${theme === 'indigo' ? 'active' : ''}`}
-          onClick={() => handleThemeChange('indigo')}
-          title="Indigo Theme"
-        >
-          Indigo
-        </button>
+        {themes.map((themeOption) => (
+          <button
+            key={themeOption.id}
+            className={`theme-option ${theme === themeOption.id ? 'active' : ''}`}
+            onClick={() => handleThemeChange(themeOption.id)}
+            title={themeOption.description}
+          >
+            {themeOption.name}
+          </button>
+        ))}
       </div>
     </div>
   );
