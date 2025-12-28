@@ -6,8 +6,8 @@ import Home from './pages/Home';
 import EditEntry from './pages/EditEntry';
 import ViewEntry from './pages/ViewEntry';
 import Search from './components/Search';
-import ThemeSelector from './components/ThemeSelector';
-import Logo from './components/Logo';
+import Timeline from './pages/Timeline';
+import AppHeader from './components/AppHeader';
 import { authAPI } from './services/api';
 import { getUser, setUser, removeAuthToken } from './utils/auth';
 import './App.css';
@@ -96,6 +96,16 @@ function App() {
                 element={
                   user ? (
                     <Search />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/timeline"
+                element={
+                  user ? (
+                    <Timeline />
                   ) : (
                     <Navigate to="/login" replace />
                   )
