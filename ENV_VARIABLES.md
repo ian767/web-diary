@@ -8,7 +8,7 @@ This document lists all environment variables required for production deployment
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `REACT_APP_API_BASE_URL` | Backend API base URL | `https://your-backend.onrender.com/api` |
+| `REACT_APP_API_BASE_URL` | Backend domain only (no /api prefix) | `https://your-backend.onrender.com` |
 
 **Note**: In development, this can be left empty to use Create React App's proxy (configured in `package.json`).
 
@@ -48,8 +48,9 @@ This document lists all environment variables required for production deployment
 1. Go to your project → Settings → Environment Variables
 2. Add:
    ```
-   REACT_APP_API_BASE_URL=https://your-backend.onrender.com/api
+   REACT_APP_API_BASE_URL=https://your-backend.onrender.com
    ```
+   **Note**: Do NOT include `/api` in the URL - it's added automatically to all endpoints.
 3. Redeploy after adding variables
 
 ### Render (Backend)
@@ -65,7 +66,7 @@ Create `.env` files (not committed to Git):
 **`frontend/.env`** (optional for development):
 ```
 # Leave empty to use proxy, or set for testing:
-# REACT_APP_API_BASE_URL=http://localhost:5001/api
+# REACT_APP_API_BASE_URL=http://localhost:5001
 ```
 
 **`backend/.env`**:

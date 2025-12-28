@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-// Production: Use REACT_APP_API_BASE_URL (e.g., https://your-backend.herokuapp.com/api)
-// Development: Falls back to '/api' which works with Create React App's proxy (package.json)
-// Required for production: Set REACT_APP_API_BASE_URL environment variable
-const API_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+// Production: REACT_APP_API_BASE_URL should be the backend domain only (e.g., https://your-backend.onrender.com)
+// Development: Falls back to empty string (relative URLs work with Create React App's proxy)
+// All API endpoints explicitly include '/api/' prefix
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -40,7 +40,7 @@ api.interceptors.response.use(
 );
 
 // Auth API
-use '/api/auth' (not '/auth')
+// All endpoints explicitly include '/api/' prefix
 export const authAPI = {
   register: (username, email, password) =>
     api.post('/api/auth/register', { username, email, password }),
@@ -50,11 +50,10 @@ export const authAPI = {
 };
 
 // Diary API
-// Note: baseURL already includes '/api', so use '/diary' (not '/api/diary')
-// Backend routes are mounted at /api/diary, so this results in /api/diary
+// All endpoints explicitly include '/api/' prefix to match backend routes mounted at /api/diary
 export const diaryAPI = {
-  getEntries: (params) => api.get('/diary', { params }),
-  getEntry: (id) => api.get(`/diary/${id}`),
+  getEntries: (params) => api.get('/api/diary', { params }),
+  getEntry: (id) => api.get(`/api/diary/${id}`),
   createEntry: (data, files) => {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
@@ -82,7 +81,7 @@ export const diaryAPI = {
         formData.append('customFilenames', JSON.stringify(customFilenamesMap));
       }
     }
-    return api.post('/diary', formData, {
+    return api.post('/api/diary', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
@@ -116,23 +115,24 @@ export const diaryAPI = {
         formData.append('customFilenames', JSON.stringify(customFilenamesMap));
       }
     }
-    return api.put(`/diary/${id}`, formData, {
+    return api.put(`/api/diary/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
-  deleteEntry: (id) => api.delete(`/diary/${id}`),
+  deleteEntry: (id) => api.delete(`/api/diary/${id}`),
   deleteAttachment: (entryId, attachmentId) =>
-    api.delete(`/diary/${entryId}/attachments/${attachmentId}`),
+    api.delete(`/api/diary/${entryId}/attachments/${attachmentId}`),
 };
 
 // Tasks API
+// All endpoints explicitly include '/api/' prefix
 export const tasksAPI = {
-  getTasks: (params) => api.get('/tasks', { params }),
-  getTask: (id) => api.get(`/tasks/${id}`),
-  createTask: (data) => api.post('/tasks', data),
-  updateTask: (id, data) => api.put(`/tasks/${id}`, data),
-  deleteTask: (id) => api.delete(`/tasks/${id}`),
-  toggleTask: (id) => api.patch(`/tasks/${id}/toggle`),
+  getTasks: (params) => api.get('/api/tasks', { params }),
+  getTask: (id) => api.get(`/api/tasks/${id}`),
+  createTask: (data) => api.post('/api/tasks', data),
+  updateTask: (id, data) => api.put(`/api/tasks/${id}`, data),
+  deleteTask: (id) => api.delete(`/api/tasks/${id}`),
+  toggleTask: (id) => api.patch(`/api/tasks/${id}/toggle`),
 };
 
 export default api;

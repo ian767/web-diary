@@ -110,8 +110,9 @@ This guide explains how to deploy the Web Diary app to production using Vercel (
 
 2. **Set Environment Variables** in Vercel:
    ```
-   REACT_APP_API_BASE_URL=https://your-backend.onrender.com/api
+   REACT_APP_API_BASE_URL=https://your-backend.onrender.com
    ```
+   **Note**: Use the backend domain only (no `/api` prefix). All API endpoints explicitly include `/api/`.
 
 3. **Deploy**:
    - Vercel will automatically build and deploy
@@ -151,7 +152,7 @@ This guide explains how to deploy the Web Diary app to production using Vercel (
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `REACT_APP_API_BASE_URL` | Backend API base URL (required in production) | `https://backend.onrender.com/api` |
+| `REACT_APP_API_BASE_URL` | Backend domain only (no /api prefix, required in production) | `https://backend.onrender.com` |
 
 ### Backend (Render)
 

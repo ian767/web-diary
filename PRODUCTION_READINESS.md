@@ -9,8 +9,8 @@ This document summarizes the changes made to prepare the Web Diary app for produ
 - **API URL Configuration**:
   - Changed from `REACT_APP_API_URL` to `REACT_APP_API_BASE_URL`
   - Updated in: `services/api.js`, `components/DiaryEntryList.js`, `components/MonthlyEntryList.js`, `components/DiaryEntryForm.js`, `pages/Home.js`
-  - Production requires: `REACT_APP_API_BASE_URL=https://your-backend.onrender.com/api`
-  - Development: Falls back to `/api` (uses Create React App proxy)
+  - Production requires: `REACT_APP_API_BASE_URL=https://your-backend.onrender.com` (domain only, no `/api`)
+  - Development: Falls back to empty string (uses Create React App proxy with relative URLs)
 
 - **Build Process**:
   - No changes needed - `npm run build` works as-is

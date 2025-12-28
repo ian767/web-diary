@@ -313,11 +313,24 @@ const Home = ({ onNavigateRef }) => {
       if (view === 'home') {
         await loadOverviewData();
       }
-      // Show success feedback (optional - could add a toast notification here)
+      // Success feedback - entries will be refreshed automatically
       console.log('Entry saved successfully');
     } catch (err) {
-      // Show detailed error message
-      const errorMessage = err.response?.data?.error || err.message || 'Error saving entry';
+      // Show detailed error message from server
+      let errorMessage = 'Error saving entry';
+      if (err.response) {
+        // Server responded with error status
+        const status = err.response.status;
+        const statusText = err.response.statusText;
+        const serverError = err.response.data?.error || err.response.data?.message;
+        errorMessage = serverError || `Server error (${status} ${statusText})`;
+      } else if (err.request) {
+        // Request made but no response (network error)
+        errorMessage = 'Network error: Could not reach server';
+      } else {
+        // Error in request setup
+        errorMessage = err.message || 'Error saving entry';
+      }
       setError(errorMessage);
       console.error('Error saving entry:', err);
       // Keep form open so user can fix and retry
