@@ -140,6 +140,9 @@ class Database {
       // Add missing columns if they don't exist (for migrations from SQLite)
       await this.addMissingColumns(client);
 
+      // Phase 2: Add full-text search indexing
+      await this.setupFullTextSearch(client);
+
       await client.query('COMMIT');
       console.log('Database tables initialized successfully');
     } catch (err) {
@@ -233,9 +236,101 @@ class Database {
         `);
         console.log('Added content_text column to diary_entries');
       }
+
+      // Phase 2: Populate content_text from content_html for old entries
+      // This migration runs once to backfill content_text for entries that only have content_html
+      const needsMigration = await client.query(`
+        SELECT COUNT(*) as count
+        FROM diary_entries
+        WHERE (content_text IS NULL OR content_text = '')
+        AND (content_html IS NOT NULL AND content_html != '')
+      `);
+      if (needsMigration.rows[0].count > 0) {
+        console.log(`Migrating ${needsMigration.rows[0].count} entries: populating content_text from content_html...`);
+        // Strip HTML tags to create plain text (simple regex-based approach)
+        // Note: This is a basic migration. For production, consider using a proper HTML parser.
+        await client.query(`
+          UPDATE diary_entries
+          SET content_text = regexp_replace(
+            regexp_replace(content_html, '<[^>]+>', '', 'g'),
+            '\\s+', ' ', 'g'
+          )
+          WHERE (content_text IS NULL OR content_text = '')
+          AND (content_html IS NOT NULL AND content_html != '')
+        `);
+        console.log('Migration complete: content_text populated from content_html');
+      }
     } catch (err) {
       console.warn('Warning during column migration:', err.message);
       // Don't fail initialization if migration fails
+    }
+  }
+
+  /**
+   * Phase 2: Setup full-text search indexing
+   * Creates a tsvector column and GIN index for fast full-text search
+   */
+  async setupFullTextSearch(client) {
+    try {
+      // Check if search_vector column exists
+      const searchVectorCheck = await client.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='diary_entries' AND column_name='search_vector'
+      `);
+
+      if (searchVectorCheck.rows.length === 0) {
+        // Add tsvector column for full-text search
+        // Combines title, content_text, and tags for search
+        await client.query(`
+          ALTER TABLE diary_entries 
+          ADD COLUMN search_vector tsvector
+        `);
+        console.log('Added search_vector column to diary_entries');
+
+        // Create a function to update search_vector (using 'english' text search configuration)
+        await client.query(`
+          CREATE OR REPLACE FUNCTION diary_entries_search_vector_update()
+          RETURNS TRIGGER AS $$
+          BEGIN
+            NEW.search_vector := 
+              setweight(to_tsvector('english', COALESCE(NEW.title, '')), 'A') ||
+              setweight(to_tsvector('english', COALESCE(NEW.content_text, '')), 'B') ||
+              setweight(to_tsvector('english', COALESCE(NEW.tags, '')), 'C');
+            RETURN NEW;
+          END;
+          $$ LANGUAGE plpgsql;
+        `);
+
+        // Create trigger to automatically update search_vector on insert/update
+        await client.query(`
+          CREATE TRIGGER diary_entries_search_vector_trigger
+          BEFORE INSERT OR UPDATE ON diary_entries
+          FOR EACH ROW
+          EXECUTE FUNCTION diary_entries_search_vector_update()
+        `);
+        console.log('Created search_vector trigger');
+
+        // Populate search_vector for existing entries
+        await client.query(`
+          UPDATE diary_entries
+          SET search_vector = 
+            setweight(to_tsvector('english', COALESCE(title, '')), 'A') ||
+            setweight(to_tsvector('english', COALESCE(content_text, '')), 'B') ||
+            setweight(to_tsvector('english', COALESCE(tags, '')), 'C')
+        `);
+        console.log('Populated search_vector for existing entries');
+
+        // Create GIN index for fast full-text search
+        await client.query(`
+          CREATE INDEX IF NOT EXISTS idx_diary_search_vector 
+          ON diary_entries USING GIN(search_vector)
+        `);
+        console.log('Created GIN index for search_vector');
+      }
+    } catch (err) {
+      console.warn('Warning during full-text search setup:', err.message);
+      // Don't fail initialization if search setup fails
     }
   }
 

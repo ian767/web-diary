@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Login from './components/Login';
 import Home from './pages/Home';
 import EditEntry from './pages/EditEntry';
+import Search from './components/Search';
 import ThemeSelector from './components/ThemeSelector';
 import Logo from './components/Logo';
 import { authAPI } from './services/api';
@@ -96,6 +97,16 @@ function App() {
                 element={
                   user ? (
                     <EditEntry />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/search"
+                element={
+                  user ? (
+                    <Search />
                   ) : (
                     <Navigate to="/login" replace />
                   )

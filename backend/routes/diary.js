@@ -30,6 +30,145 @@ const upload = multer({
   }
 });
 
+// Phase 2: Search diary entries (full-text search with filters)
+// GET /api/diary/search?q=keyword&from=YYYY-MM-DD&to=YYYY-MM-DD&mood=happy&tags=tag1,tag2&limit=20&offset=0
+router.get('/search', authenticateToken, async (req, res) => {
+  try {
+    const { q, from, to, mood, tags, limit = 20, offset = 0 } = req.query;
+    const userId = req.user.id;
+    const pool = database.getPool();
+
+    // Build query with filters
+    let query = 'SELECT id, date as entry_date, title, mood, tags, content_text FROM diary_entries WHERE user_id = $1';
+    const params = [userId];
+    let paramIndex = 2;
+
+    // Full-text search (if q is provided)
+    if (q && q.trim()) {
+      // Use websearch_to_tsquery for user-friendly search (supports phrases, AND, OR, NOT)
+      // Falls back to plainto_tsquery if websearch_to_tsquery is not available (Postgres < 11)
+      query += ` AND search_vector @@ websearch_to_tsquery('english', $${paramIndex})`;
+      params.push(q.trim());
+      paramIndex++;
+    }
+
+    // Date range filter
+    if (from) {
+      query += ` AND date >= $${paramIndex}`;
+      params.push(from);
+      paramIndex++;
+    }
+    if (to) {
+      query += ` AND date <= $${paramIndex}`;
+      params.push(to);
+      paramIndex++;
+    }
+
+    // Mood filter
+    if (mood) {
+      query += ` AND mood = $${paramIndex}`;
+      params.push(mood);
+      paramIndex++;
+    }
+
+    // Tags filter (comma-separated)
+    if (tags) {
+      const tagArray = tags.split(',').map(t => t.trim()).filter(t => t);
+      if (tagArray.length > 0) {
+        // Check if any of the tags appear in the tags field
+        query += ` AND (`;
+        tagArray.forEach((tag, idx) => {
+          if (idx > 0) query += ' OR ';
+          query += `tags LIKE $${paramIndex}`;
+          params.push(`%${tag}%`);
+          paramIndex++;
+        });
+        query += `)`;
+      }
+    }
+
+    // Get total count (before pagination)
+    const countQuery = query.replace(/SELECT.*?FROM/, 'SELECT COUNT(*) as total FROM');
+    const countResult = await pool.query(countQuery, params);
+    const total = parseInt(countResult.rows[0].total, 10);
+
+    // Add ordering and pagination
+    if (q && q.trim()) {
+      // Order by relevance (ts_rank) when searching
+      query += ` ORDER BY ts_rank(search_vector, websearch_to_tsquery('english', $${paramIndex - (q ? 1 : 0)})) DESC, date DESC`;
+    } else {
+      // Order by date when filtering only
+      query += ` ORDER BY date DESC, created_at DESC`;
+    }
+
+    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(parseInt(limit, 10), parseInt(offset, 10));
+
+    const entriesResult = await pool.query(query, params);
+    const entries = entriesResult.rows;
+
+    // Generate snippets for each entry
+    // Use ts_headline if available, otherwise substring
+    const results = await Promise.all(entries.map(async (entry) => {
+      let snippet = '';
+      
+      if (q && q.trim()) {
+        // Use ts_headline to highlight search terms
+        try {
+          const headlineResult = await pool.query(`
+            SELECT ts_headline('english', 
+              COALESCE(title || ' ', '') || COALESCE(content_text, ''),
+              websearch_to_tsquery('english', $1),
+              'StartSel=<mark>, StopSel=</mark>, MaxWords=30, MinWords=15'
+            ) as headline
+          `, [q.trim()]);
+          snippet = headlineResult.rows[0]?.headline || '';
+        } catch (err) {
+          // Fallback if ts_headline fails
+          console.warn('ts_headline failed, using substring:', err.message);
+        }
+      }
+      
+      // Fallback to substring if no search query or ts_headline failed
+      if (!snippet && entry.content_text) {
+        snippet = entry.content_text.substring(0, 160);
+        if (entry.content_text.length > 160) {
+          snippet += '...';
+        }
+      } else if (!snippet && entry.title) {
+        snippet = entry.title;
+      }
+
+      // Get attachment count
+      const attachmentCountResult = await pool.query(
+        'SELECT COUNT(*) as count FROM attachments WHERE diary_entry_id = $1',
+        [entry.id]
+      );
+      const attachmentCount = parseInt(attachmentCountResult.rows[0].count, 10);
+
+      return {
+        id: entry.id,
+        entry_date: entry.entry_date,
+        title: entry.title,
+        snippet: snippet.trim(),
+        mood: entry.mood,
+        tags: entry.tags,
+        attachmentCount
+      };
+    }));
+
+    res.json({
+      total,
+      limit: parseInt(limit, 10),
+      offset: parseInt(offset, 10),
+      results
+    });
+  } catch (error) {
+    console.error('Error searching diary entries:', error);
+    res.status(500).json({ error: 'Error searching diary entries' });
+  }
+});
+
 // Get diary entries with filters (daily, weekly, monthly, yearly)
 router.get('/', authenticateToken, async (req, res) => {
   try {

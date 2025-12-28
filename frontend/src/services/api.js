@@ -117,10 +117,23 @@ export const diaryAPI = {
     // Don't set Content-Type header - axios will set it automatically with boundary for FormData
     return api.put(`/api/diary/${id}`, formData);
   },
-  deleteEntry: (id) => api.delete(`/api/diary/${id}`),
-  deleteAttachment: (entryId, attachmentId) =>
-    api.delete(`/api/diary/${entryId}/attachments/${attachmentId}`),
-};
+      deleteEntry: (id) => api.delete(`/api/diary/${id}`),
+      deleteAttachment: (entryId, attachmentId) =>
+        api.delete(`/api/diary/${entryId}/attachments/${attachmentId}`),
+      // Phase 2: Search endpoint
+      searchEntries: (params) => {
+        // Build query string from params object
+        const queryParams = new URLSearchParams();
+        if (params.q) queryParams.append('q', params.q);
+        if (params.from) queryParams.append('from', params.from);
+        if (params.to) queryParams.append('to', params.to);
+        if (params.mood) queryParams.append('mood', params.mood);
+        if (params.tags) queryParams.append('tags', params.tags);
+        if (params.limit) queryParams.append('limit', params.limit);
+        if (params.offset) queryParams.append('offset', params.offset);
+        return api.get(`/api/diary/search?${queryParams.toString()}`);
+      },
+    };
 
 // Tasks API
 // All endpoints explicitly include '/api/' prefix
