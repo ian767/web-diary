@@ -58,6 +58,12 @@
   gap: 1rem;
 }
 
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .app-header .user-info span {
   color: var(--text-primary);
   font-weight: 500;

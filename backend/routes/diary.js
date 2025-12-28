@@ -289,10 +289,10 @@ router.put('/:id', authenticateToken, upload.array('attachments', 10), async (re
       }
     }
 
-    // Update diary entry
-    let updateQuery = 'UPDATE diary_entries SET date = $1, title = $2, content = $3, mood = $4, weather = $5, tags = $6, updated_at = CURRENT_TIMESTAMP';
-    const updateParams = [date, title, content, mood || null, weather || null, tags || null];
-    let paramIndex = 7;
+    // Update diary entry (Phase 1: support content_html/content_text)
+    let updateQuery = 'UPDATE diary_entries SET date = $1, title = $2, content = $3, content_html = $4, content_text = $5, mood = $6, weather = $7, tags = $8, updated_at = CURRENT_TIMESTAMP';
+    const updateParams = [date, title, content || null, htmlContent, textContent, mood || null, weather || null, tags || null];
+    let paramIndex = 9;
 
     // Update visibility if provided
     if (visibility !== undefined) {

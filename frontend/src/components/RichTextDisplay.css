@@ -63,6 +63,8 @@
 .rich-text-content a {
   color: var(--accent, #007bff);
   text-decoration: underline;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .rich-text-content a:hover {

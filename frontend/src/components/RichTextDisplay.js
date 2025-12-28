@@ -26,7 +26,17 @@ const RichTextDisplay = ({ htmlContent, plainTextContent }) => {
   
   if (htmlContent) {
     // Use HTML content if available (new format)
-    contentToDisplay = DOMPurify.sanitize(htmlContent, {
+    // Post-process to ensure links have proper attributes
+    const tmp = document.createElement('div');
+    tmp.innerHTML = htmlContent;
+    const links = tmp.querySelectorAll('a[href]');
+    links.forEach(link => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+    const processedHtml = tmp.innerHTML;
+    
+    contentToDisplay = DOMPurify.sanitize(processedHtml, {
       ALLOWED_TAGS: [
         'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'ul', 'ol', 'li', 'a', 'blockquote', 'pre', 'code',

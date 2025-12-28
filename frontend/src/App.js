@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Home from './pages/Home';
 import EditEntry from './pages/EditEntry';
 import ThemeToggle from './components/ThemeToggle';
+import ThemeSelector from './components/ThemeSelector';
 import Logo from './components/Logo';
 import { authAPI } from './services/api';
 import { getUser, setUser, removeAuthToken } from './utils/auth';

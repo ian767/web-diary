@@ -16,8 +16,27 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     return '';
   };
   
+  // Format date for date input (YYYY-MM-DD)
+  const formatDateForInput = (dateValue) => {
+    if (!dateValue) return new Date().toISOString().split('T')[0];
+    // If it's already in YYYY-MM-DD format, return as is
+    if (typeof dateValue === 'string' && dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return dateValue;
+    }
+    // If it's a Date object or other format, convert it
+    try {
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) {
+        return new Date().toISOString().split('T')[0];
+      }
+      return date.toISOString().split('T')[0];
+    } catch (e) {
+      return new Date().toISOString().split('T')[0];
+    }
+  };
+  
   const [formData, setFormData] = useState({
-    date: entry?.date || new Date().toISOString().split('T')[0],
+    date: formatDateForInput(entry?.date),
     title: entry?.title || '',
     content_html: getInitialContentHtml(),
     mood: entry?.mood || '',
@@ -66,9 +85,36 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
       return tmp.textContent || tmp.innerText || '';
     };
 
+    // Normalize and fix links in HTML content
+    const normalizeLinks = (html) => {
+      if (!html) return html;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      
+      // Find all anchor tags and normalize URLs
+      const links = tmp.querySelectorAll('a[href]');
+      links.forEach(link => {
+        let href = link.getAttribute('href');
+        if (href) {
+          // If URL doesn't have protocol, add https://
+          if (href && !href.match(/^https?:\/\//i) && !href.startsWith('mailto:') && !href.startsWith('#') && !href.startsWith('/')) {
+            href = `https://${href}`;
+            link.setAttribute('href', href);
+          }
+          // Ensure links open in new tab safely
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+      });
+      
+      return tmp.innerHTML;
+    };
+
+    const normalizedHtml = normalizeLinks(htmlContent);
+
     setFormData(prev => ({
       ...prev,
-      content_html: htmlContent,
+      content_html: normalizedHtml,
       content_text: extractPlainText(htmlContent),
     }));
   };

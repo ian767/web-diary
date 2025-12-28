@@ -79,17 +79,18 @@
   font-size: 0.9375rem;
   line-height: 1.6;
   min-height: 200px;
-  color: var(--text-primary);
-  background: var(--bg-primary);
+  color: #333;
+  background: #fff; /* White background for readability */
 }
 
 .content-with-stickers .ql-editor {
   min-height: 200px;
-  color: var(--text-primary);
+  color: #333; /* Dark text for contrast */
+  background: #fff; /* White background for readability */
 }
 
 .content-with-stickers .ql-editor.ql-blank::before {
-  color: var(--text-secondary);
+  color: #999; /* Placeholder text color */
   font-style: normal;
 }
 
