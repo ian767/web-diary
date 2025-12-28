@@ -1,23 +1,34 @@
+.app-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.app-logo-link:hover {
+  opacity: 0.8;
+}
+
+.app-logo-link:active {
+  opacity: 0.6;
+}
+
 .app-logo {
   color: var(--accent);
   font-size: 1.8rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
   margin: 0;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+  user-select: none;
 }
 
-.app-logo:hover {
+.app-logo-link:hover .app-logo {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
   color: var(--accent-hover);
-  background: var(--bg-hover);
-  transform: translateY(-1px);
-}
-
-.app-logo:active {
-  transform: translateY(0);
-  background: var(--bg-tertiary);
 }
 
