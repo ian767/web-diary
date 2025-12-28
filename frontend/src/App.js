@@ -72,7 +72,7 @@ function App() {
                 >
                   ☰
                 </button>
-                <Logo onNavigateToHome={homeNavigateRef} />
+                <Logo />
               </div>
               <div className="app-header-right">
                 <ThemeSelector />
@@ -127,7 +127,7 @@ function App() {
                 path="/"
                 element={
                   user ? (
-                    <Home onNavigateRef={setHomeNavigateRef} />
+                    <Home />
                   ) : (
                     <Navigate to="/login" replace />
                   )

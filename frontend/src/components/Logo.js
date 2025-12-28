@@ -1,17 +1,19 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Logo.css';
 
-const Logo = ({ onNavigateToHome }) => {
-  const handleClick = () => {
-    if (onNavigateToHome) {
-      onNavigateToHome();
-    }
-  };
-
+/**
+ * Logo Component
+ * Clickable logo that navigates to Home page
+ * Uses Link for consistent navigation across the app
+ */
+const Logo = () => {
   return (
-    <h1 className="app-logo" onClick={handleClick} title="Go to main page">
-      📔 Web Diary
-    </h1>
+    <Link to="/" className="app-logo-link" title="Go to Home">
+      <h1 className="app-logo">
+        📔 Web Diary
+      </h1>
+    </Link>
   );
 };
 

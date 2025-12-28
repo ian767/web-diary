@@ -21,20 +21,10 @@ import { diaryAPI, tasksAPI } from '../services/api';
 import './Home.css';
 import './CalendarDarkMode.css';
 
-const Home = ({ onNavigateRef }) => {
+const Home = () => {
   const navigate = useNavigate();
   const [view, setView] = useState('home'); // Default to home view
   const [selectedDate, setSelectedDate] = useState(new Date());
-  
-  // Expose navigation function to parent (for logo click)
-  useEffect(() => {
-    if (onNavigateRef) {
-      onNavigateRef(() => {
-        setView('home');
-        setSelectedDate(new Date()); // Navigate to today
-      });
-    }
-  }, [onNavigateRef]);
   const [entries, setEntries] = useState([]);
   const [allWeekEntries, setAllWeekEntries] = useState([]); // Store all week entries for daily view calendar indicators
   const [allMonthEntries, setAllMonthEntries] = useState([]); // Store all month entries for monthly view calendar indicators
