@@ -140,19 +140,44 @@ router.get('/search', authenticateToken, async (req, res) => {
       let snippet = '';
       
       if (q && q.trim()) {
+        const searchTerm = q.trim();
         // Use ts_headline to highlight search terms
+        // Try with prefix query first, then fallback to exact term
         try {
+          const words = searchTerm.split(/\s+/).filter(w => w.length > 0);
+          const prefixQueries = words.map(word => `${word}:*`).join(' & ');
+          
           const headlineResult = await pool.query(`
             SELECT ts_headline('english', 
               COALESCE(title || ' ', '') || COALESCE(content_text, ''),
-              websearch_to_tsquery('english', $1),
+              to_tsquery('english', $1),
               'StartSel=<mark>, StopSel=</mark>, MaxWords=30, MinWords=15'
             ) as headline
-          `, [q.trim()]);
+          `, [prefixQueries]);
           snippet = headlineResult.rows[0]?.headline || '';
         } catch (err) {
           // Fallback if ts_headline fails
           console.warn('ts_headline failed, using substring:', err.message);
+        }
+        
+        // If snippet is still empty, try substring highlighting
+        if (!snippet && entry.content_text) {
+          const lowerContent = entry.content_text.toLowerCase();
+          const lowerSearch = searchTerm.toLowerCase();
+          const index = lowerContent.indexOf(lowerSearch);
+          if (index >= 0) {
+            const start = Math.max(0, index - 40);
+            const end = Math.min(entry.content_text.length, index + searchTerm.length + 40);
+            let snippetText = entry.content_text.substring(start, end);
+            if (start > 0) snippetText = '...' + snippetText;
+            if (end < entry.content_text.length) snippetText = snippetText + '...';
+            // Highlight the search term (escape special regex characters)
+            const escapedSearch = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            snippet = snippetText.replace(
+              new RegExp(`(${escapedSearch})`, 'gi'),
+              '<mark>$1</mark>'
+            );
+          }
         }
       }
       
