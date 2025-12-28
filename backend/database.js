@@ -340,6 +340,102 @@ class Database {
     }
   }
 
+  /**
+   * Phase 3A: Create categories table
+   * Creates a categories table for organizing diary entries by user
+   */
+  async createCategoriesTable(client) {
+    try {
+      // Create categories table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS categories (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+          UNIQUE(user_id, name)
+        )
+      `);
+
+      // Create index for user_id for faster lookups
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_categories_user_id ON categories(user_id)
+      `);
+
+      console.log('Categories table created successfully');
+    } catch (err) {
+      console.warn('Warning during categories table creation:', err.message);
+      // Don't fail initialization if categories setup fails
+    }
+  }
+
+  /**
+   * Phase 3A: Add organization fields to diary_entries
+   * Adds is_favorite (boolean) and category_id (nullable FK) columns
+   */
+  async addOrganizationFields(client) {
+    try {
+      // Check and add is_favorite column if missing
+      const isFavoriteCheck = await client.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='diary_entries' AND column_name='is_favorite'
+      `);
+      if (isFavoriteCheck.rows.length === 0) {
+        await client.query(`
+          ALTER TABLE diary_entries 
+          ADD COLUMN is_favorite BOOLEAN DEFAULT false
+        `);
+        console.log('Added is_favorite column to diary_entries');
+      }
+
+      // Check and add category_id column if missing
+      const categoryIdCheck = await client.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='diary_entries' AND column_name='category_id'
+      `);
+      if (categoryIdCheck.rows.length === 0) {
+        await client.query(`
+          ALTER TABLE diary_entries 
+          ADD COLUMN category_id INTEGER
+        `);
+        console.log('Added category_id column to diary_entries');
+      }
+
+      // Check and add foreign key constraint if missing
+      const fkCheck = await client.query(`
+        SELECT constraint_name 
+        FROM information_schema.table_constraints 
+        WHERE table_name='diary_entries' AND constraint_name='fk_diary_category'
+      `);
+      if (fkCheck.rows.length === 0) {
+        await client.query(`
+          ALTER TABLE diary_entries 
+          ADD CONSTRAINT fk_diary_category 
+          FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+        `);
+        console.log('Added foreign key constraint for category_id');
+      }
+
+      // Create index for category_id for faster lookups
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_diary_category_id ON diary_entries(category_id)
+      `);
+
+      // Create index for is_favorite for faster filtering
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_diary_is_favorite ON diary_entries(user_id, is_favorite)
+      `);
+
+      console.log('Organization fields added successfully');
+    } catch (err) {
+      console.warn('Warning during organization fields setup:', err.message);
+      // Don't fail initialization if organization fields setup fails
+    }
+  }
+
   getPool() {
     return this.pool;
   }
