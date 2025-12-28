@@ -73,9 +73,9 @@ const Search = () => {
     performSearch();
   }, [performSearch]);
 
-  const handleResultClick = (entryId, entryDate) => {
-    // Navigate to Home with the entry date selected, then expand the entry
-    navigate('/', { state: { searchResultId: entryId, searchDate: entryDate } });
+  const handleResultClick = (entryId) => {
+    // Navigate to dedicated entry view page
+    navigate(`/entries/${entryId}`);
   };
 
   const clearFilters = () => {
@@ -89,6 +89,9 @@ const Search = () => {
   return (
     <div className="search-container">
       <div className="search-header">
+        <Link to="/" className="search-logo-link">
+          <Logo />
+        </Link>
         <h2>Search Diary Entries</h2>
       </div>
 
@@ -180,7 +183,7 @@ const Search = () => {
                   <div
                     key={result.id}
                     className="search-result-item"
-                    onClick={() => handleResultClick(result.id, result.entry_date)}
+                    onClick={() => handleResultClick(result.id)}
                   >
                     <div className="result-header">
                       <h3 className="result-title">

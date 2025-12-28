@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Login from './components/Login';
 import Home from './pages/Home';
 import EditEntry from './pages/EditEntry';
+import ViewEntry from './pages/ViewEntry';
 import Search from './components/Search';
 import ThemeSelector from './components/ThemeSelector';
 import Logo from './components/Logo';
@@ -89,6 +90,16 @@ function App() {
                     <Navigate to="/" replace />
                   ) : (
                     <Login onLogin={handleLogin} />
+                  )
+                }
+              />
+              <Route
+                path="/entries/:id"
+                element={
+                  user ? (
+                    <ViewEntry />
+                  ) : (
+                    <Navigate to="/login" replace />
                   )
                 }
               />

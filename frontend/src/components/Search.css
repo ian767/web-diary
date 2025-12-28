@@ -6,12 +6,22 @@
 
 .search-header {
   margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.search-logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .search-header h2 {
   color: var(--accent);
   font-size: 1.8rem;
   font-weight: 600;
+  margin: 0;
 }
 
 .search-filters {

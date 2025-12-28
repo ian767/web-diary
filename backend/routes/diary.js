@@ -43,13 +43,27 @@ router.get('/search', authenticateToken, async (req, res) => {
     const params = [userId];
     let paramIndex = 2;
 
-    // Full-text search (if q is provided)
+    // Hybrid search: Full-text search + substring fallback (if q is provided)
     if (q && q.trim()) {
-      // Use websearch_to_tsquery for user-friendly search (supports phrases, AND, OR, NOT)
-      // Falls back to plainto_tsquery if websearch_to_tsquery is not available (Postgres < 11)
-      query += ` AND search_vector @@ websearch_to_tsquery('english', $${paramIndex})`;
-      params.push(q.trim());
-      paramIndex++;
+      const searchTerm = q.trim();
+      
+      // Strategy 1: Full-text search with prefix matching
+      // Convert search term to prefix queries for better matching (e.g., "test" matches "test6")
+      // Split into words and create prefix queries
+      const words = searchTerm.split(/\s+/).filter(w => w.length > 0);
+      const prefixQueries = words.map(word => `${word}:*`).join(' & ');
+      
+      // Strategy 2: Substring matching (ILIKE) for exact matches like URLs
+      // Combine both strategies with OR
+      query += ` AND (
+        search_vector @@ to_tsquery('english', $${paramIndex})
+        OR title ILIKE $${paramIndex + 1}
+        OR content_text ILIKE $${paramIndex + 1}
+        OR tags ILIKE $${paramIndex + 1}
+      )`;
+      params.push(prefixQueries); // Prefix query for FTS
+      params.push(`%${searchTerm}%`); // Substring pattern for ILIKE
+      paramIndex += 2;
     }
 
     // Date range filter
