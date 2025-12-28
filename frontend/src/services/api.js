@@ -81,9 +81,8 @@ export const diaryAPI = {
         formData.append('customFilenames', JSON.stringify(customFilenamesMap));
       }
     }
-    return api.post('/api/diary', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    // Don't set Content-Type header - axios will set it automatically with boundary for FormData
+    return api.post('/api/diary', formData);
   },
   updateEntry: (id, data, files) => {
     const formData = new FormData();
@@ -115,9 +114,8 @@ export const diaryAPI = {
         formData.append('customFilenames', JSON.stringify(customFilenamesMap));
       }
     }
-    return api.put(`/api/diary/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    // Don't set Content-Type header - axios will set it automatically with boundary for FormData
+    return api.put(`/api/diary/${id}`, formData);
   },
   deleteEntry: (id) => api.delete(`/api/diary/${id}`),
   deleteAttachment: (entryId, attachmentId) =>

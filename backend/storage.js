@@ -59,8 +59,12 @@ class StorageService {
    * @returns {Promise<{url: string, key: string}>} Public URL and storage key
    */
   async uploadFile(fileBuffer, originalFilename, mimeType) {
+    // Check for required configuration
     if (!this.bucket) {
       throw new Error('Storage bucket not configured. Set STORAGE_BUCKET environment variable.');
+    }
+    if (!process.env.STORAGE_ACCESS_KEY_ID || !process.env.STORAGE_SECRET_ACCESS_KEY) {
+      throw new Error('Storage credentials not configured. Set STORAGE_ACCESS_KEY_ID and STORAGE_SECRET_ACCESS_KEY environment variables.');
     }
 
     // Generate unique filename

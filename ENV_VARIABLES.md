@@ -22,10 +22,10 @@ This document lists all environment variables required for production deployment
 |----------|-------------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:port/database` |
 | `JWT_SECRET` | Secret key for JWT tokens | Generate with: `openssl rand -base64 32` |
-| `STORAGE_BUCKET` | S3-compatible bucket name | `my-diary-uploads` |
-| `STORAGE_ACCESS_KEY_ID` | Storage access key ID | (from AWS/R2/Supabase) |
-| `STORAGE_SECRET_ACCESS_KEY` | Storage secret access key | (from AWS/R2/Supabase) |
-| `STORAGE_REGION` | AWS region (for S3) | `us-east-1` |
+| `STORAGE_BUCKET` | S3-compatible bucket name (REQUIRED) | `my-diary-uploads` |
+| `STORAGE_ACCESS_KEY_ID` | Storage access key ID (REQUIRED) | (from AWS/R2/Supabase) |
+| `STORAGE_SECRET_ACCESS_KEY` | Storage secret access key (REQUIRED) | (from AWS/R2/Supabase) |
+| `STORAGE_REGION` | AWS region (REQUIRED for AWS S3) | `us-east-1` |
 
 ### Optional (but recommended)
 

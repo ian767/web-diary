@@ -38,8 +38,24 @@ const EditEntry = () => {
   const handleSubmit = async (data) => {
     try {
       setError('');
-      await diaryAPI.updateEntry(id, data, data.files);
-      // Success - navigate back to return path (or Home)
+      const response = await diaryAPI.updateEntry(id, data, data.files);
+      
+      // Check for partial success (207) or upload errors
+      const status = response.status || (response.response?.status);
+      const responseData = response.data || response.response?.data;
+      if (status === 207 || responseData?.uploadErrors) {
+        const uploadErrors = responseData?.uploadErrors || [];
+        if (uploadErrors.length > 0) {
+          // Show warning about failed uploads
+          const errorDetails = uploadErrors.map(e => `${e.filename}: ${e.error}`).join('; ');
+          setError(`Entry updated but file upload failed: ${errorDetails}`);
+          console.warn('Entry updated but uploads failed:', uploadErrors);
+          // Keep form open so user sees the error
+          return;
+        }
+      }
+      
+      // Full success - navigate back to return path (or Home)
       navigate(returnPath);
     } catch (err) {
       // Show detailed error message

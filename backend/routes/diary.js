@@ -193,8 +193,11 @@ router.post('/', authenticateToken, upload.array('attachments', 10), async (req,
     const entryId = entryResult.rows[0].id;
 
     // Handle file uploads to S3
+    const uploadErrors = [];
+    const uploadedFiles = [];
+    
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(async (file) => {
+      const uploadPromises = req.files.map(async (file, index) => {
         try {
           // Upload to S3
           const uploadResult = await storage.uploadFile(
@@ -219,8 +222,15 @@ router.post('/', authenticateToken, upload.array('attachments', 10), async (req,
               file.size
             ]
           );
+          
+          uploadedFiles.push(file.originalname);
         } catch (uploadError) {
           console.error('Error uploading file:', uploadError);
+          const errorMessage = uploadError.message || 'Unknown upload error';
+          uploadErrors.push({
+            filename: file.originalname,
+            error: errorMessage
+          });
           // Continue with other files even if one fails
         }
       });
@@ -228,9 +238,24 @@ router.post('/', authenticateToken, upload.array('attachments', 10), async (req,
       await Promise.all(uploadPromises);
     }
 
+    // Prepare response based on upload results
+    if (uploadErrors.length > 0) {
+      // Some or all uploads failed - return warning
+      const response = {
+        message: uploadErrors.length === req.files.length 
+          ? 'Entry created but file uploads failed' 
+          : 'Entry created but some file uploads failed',
+        id: entryId,
+        uploadedFiles: uploadedFiles.length,
+        uploadErrors: uploadErrors
+      };
+      return res.status(207).json(response); // 207 Multi-Status for partial success
+    }
+
     res.status(201).json({
       message: 'Diary entry created successfully',
-      id: entryId
+      id: entryId,
+      uploadedFiles: uploadedFiles.length
     });
   } catch (error) {
     console.error('Error creating diary entry:', error);
@@ -352,6 +377,9 @@ router.put('/:id', authenticateToken, upload.array('attachments', 10), async (re
     }
 
     // Handle new file uploads
+    const uploadErrors = [];
+    const uploadedFiles = [];
+    
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map(async (file) => {
         try {
@@ -378,8 +406,15 @@ router.put('/:id', authenticateToken, upload.array('attachments', 10), async (re
               file.size
             ]
           );
+          
+          uploadedFiles.push(file.originalname);
         } catch (uploadError) {
           console.error('Error uploading file:', uploadError);
+          const errorMessage = uploadError.message || 'Unknown upload error';
+          uploadErrors.push({
+            filename: file.originalname,
+            error: errorMessage
+          });
           // Continue with other files even if one fails
         }
       });
@@ -387,7 +422,22 @@ router.put('/:id', authenticateToken, upload.array('attachments', 10), async (re
       await Promise.all(uploadPromises);
     }
 
-    res.json({ message: 'Diary entry updated successfully' });
+    // Prepare response based on upload results
+    if (uploadErrors.length > 0) {
+      const response = {
+        message: uploadErrors.length === req.files.length 
+          ? 'Entry updated but file uploads failed' 
+          : 'Entry updated but some file uploads failed',
+        uploadedFiles: uploadedFiles.length,
+        uploadErrors: uploadErrors
+      };
+      return res.status(207).json(response); // 207 Multi-Status for partial success
+    }
+
+    res.json({ 
+      message: 'Diary entry updated successfully',
+      uploadedFiles: uploadedFiles.length
+    });
   } catch (error) {
     console.error('Error updating diary entry:', error);
     res.status(500).json({ error: 'Error updating diary entry' });

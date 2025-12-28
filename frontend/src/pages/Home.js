@@ -301,12 +301,31 @@ const Home = ({ onNavigateRef }) => {
   const handleEntrySubmit = async (data) => {
     try {
       setError(''); // Clear any previous errors
-      if (editingEntry) {
-        await diaryAPI.updateEntry(editingEntry.id, data, data.files);
-      } else {
-        await diaryAPI.createEntry(data, data.files);
+      const response = editingEntry 
+        ? await diaryAPI.updateEntry(editingEntry.id, data, data.files)
+        : await diaryAPI.createEntry(data, data.files);
+      
+      // Check for partial success (207) or upload errors
+      const status = response.status || (response.response?.status);
+      const responseData = response.data || response.response?.data;
+      if (status === 207 || responseData?.uploadErrors) {
+        const uploadErrors = responseData?.uploadErrors || [];
+        if (uploadErrors.length > 0) {
+          // Show warning about failed uploads
+          const errorDetails = uploadErrors.map(e => `${e.filename}: ${e.error}`).join('; ');
+          setError(`Entry saved but file upload failed: ${errorDetails}`);
+          console.warn('Entry saved but uploads failed:', uploadErrors);
+          // Still reload data to show the entry (without attachments)
+          await loadData();
+          if (view === 'home') {
+            await loadOverviewData();
+          }
+          // Keep form open so user sees the error
+          return;
+        }
       }
-      // Success - close form and reload data
+      
+      // Full success - close form and reload data
       setShowEntryForm(false);
       setEditingEntry(null);
       await loadData();
