@@ -124,3 +124,4 @@ const YearlyMonthSummary = ({ selectedDate, entries = [], onMonthClick }) => {
 
 export default YearlyMonthSummary;
 
+

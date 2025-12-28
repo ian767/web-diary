@@ -84,6 +84,9 @@ const Search = () => {
       // Remove undefined values
       Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
 
+      // Debug logging
+      console.log('Searching with params:', params);
+
       const response = await diaryAPI.searchEntries(params);
       setResults(response.data.results || []);
       setTotal(response.data.total || 0);

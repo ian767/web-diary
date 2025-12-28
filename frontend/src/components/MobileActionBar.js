@@ -24,3 +24,4 @@ const MobileActionBar = ({ onNewEntry, secondaryAction }) => {
 
 export default MobileActionBar;
 
+

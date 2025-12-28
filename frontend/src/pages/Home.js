@@ -18,7 +18,7 @@ import MobileDrawer from '../components/MobileDrawer';
 import MobileViewSelector from '../components/MobileViewSelector';
 import MobileActionBar from '../components/MobileActionBar';
 import CategoryManager from '../components/CategoryManager';
-import { diaryAPI, tasksAPI } from '../services/api';
+import { diaryAPI, tasksAPI, categoriesAPI } from '../services/api';
 import './Home.css';
 import './CalendarDarkMode.css';
 
@@ -43,7 +43,8 @@ const Home = () => {
     location: '',
     weather: '',
     tags: '',
-    favorite: false
+    favorite: false,
+    category_id: ''
   });
   // Lightbox state for Home page photos
   const [lightboxImages, setLightboxImages] = useState(null);
@@ -62,11 +63,33 @@ const Home = () => {
     };
   }, []);
 
+  // Load categories for filter
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await categoriesAPI.getCategories();
+        setCategories(response.data || []);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    };
+    loadCategories();
+    
+    const handleCategoriesUpdated = () => {
+      loadCategories();
+    };
+    window.addEventListener('categoriesUpdated', handleCategoriesUpdated);
+    
+    return () => {
+      window.removeEventListener('categoriesUpdated', handleCategoriesUpdated);
+    };
+  }, []);
+
   useEffect(() => {
     if (view !== 'home') {
       loadData();
     }
-  }, [view, selectedDate, filters.mood, filters.weather, filters.tags]);
+  }, [view, selectedDate, filters.mood, filters.weather, filters.tags, filters.favorite, filters.category_id]);
 
   // Load overview data for home view
   const [todayEntry, setTodayEntry] = useState(null);
@@ -215,6 +238,17 @@ const Home = () => {
         };
       }
 
+      // Phase 3A: Add favorite and category filters to API params
+      if (filters.favorite) {
+        entriesParams.favorite = 'true';
+      }
+      if (filters.category_id) {
+        entriesParams.category_id = filters.category_id;
+      }
+
+      // Debug logging
+      console.log('Loading entries with params:', entriesParams);
+
       const [entriesRes, tasksRes] = await Promise.all([
         diaryAPI.getEntries(entriesParams),
         tasksAPI.getTasks({ 
@@ -281,9 +315,13 @@ const Home = () => {
           entry.tags && searchTags.some(searchTag => entry.tags.toLowerCase().includes(searchTag))
         );
       }
-      // Phase 3A: Favorites filter
+      // Phase 3A: Favorites filter (client-side fallback, but should be handled by API)
       if (filters.favorite) {
         filteredEntries = filteredEntries.filter(entry => entry.is_favorite === true);
+      }
+      // Phase 3A: Category filter (client-side fallback, but should be handled by API)
+      if (filters.category_id) {
+        filteredEntries = filteredEntries.filter(entry => entry.category_id === parseInt(filters.category_id, 10));
       }
 
       setEntries(filteredEntries);
@@ -601,10 +639,10 @@ const Home = () => {
             <div className="navigation-group">
               <div className="navigation-group-header">
                 <div className="navigation-group-title">Filters</div>
-                {(filters.mood || filters.weather || filters.tags || filters.favorite) && (
+                {(filters.mood || filters.weather || filters.tags || filters.favorite || filters.category_id) && (
                   <button
                     type="button"
-                    onClick={() => setFilters({ mood: '', location: '', weather: '', tags: '', favorite: false })}
+                    onClick={() => setFilters({ mood: '', location: '', weather: '', tags: '', favorite: false, category_id: '' })}
                     className="clear-filters-btn"
                     title="Clear all filters"
                   >
@@ -687,6 +725,27 @@ const Home = () => {
                   />
                   <span>⭐ Favorites only</span>
                 </label>
+              </div>
+            </div>
+            
+            {/* Phase 3A: Category filter */}
+            <div className="navigation-group">
+              <div className="navigation-group-title">Category Filter</div>
+              <div className="navigation-filter-item">
+                <label htmlFor="category-filter">Category</label>
+                <select
+                  id="category-filter"
+                  value={filters.category_id}
+                  onChange={(e) => {
+                    setFilters({ ...filters, category_id: e.target.value });
+                  }}
+                  className="navigation-select"
+                >
+                  <option value="">All categories</option>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="navigation-group">
@@ -1056,6 +1115,25 @@ const Home = () => {
                     });
                   }}
                   onDelete={handleDeleteEntry}
+                  onEntryUpdate={(entryId, updates) => {
+                    // Phase 3A: Update entry in local state for optimistic updates
+                    setEntries(prevEntries => 
+                      prevEntries.map(entry => 
+                        entry.id === entryId ? { ...entry, ...updates } : entry
+                      )
+                    );
+                    // Also update in allWeekEntries and allMonthEntries if present
+                    setAllWeekEntries(prevEntries => 
+                      prevEntries.map(entry => 
+                        entry.id === entryId ? { ...entry, ...updates } : entry
+                      )
+                    );
+                    setAllMonthEntries(prevEntries => 
+                      prevEntries.map(entry => 
+                        entry.id === entryId ? { ...entry, ...updates } : entry
+                      )
+                    );
+                  }}
                 />
               )}
             </div>

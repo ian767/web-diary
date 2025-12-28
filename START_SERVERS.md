@@ -137,3 +137,4 @@ cd /Users/red/projects/web-diary && ./server-control.sh stop
 cd /Users/red/projects/web-diary && ./server-control.sh restart
 ```
 
+

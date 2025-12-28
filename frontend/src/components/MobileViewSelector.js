@@ -29,3 +29,4 @@ const MobileViewSelector = ({ view, onViewChange }) => {
 
 export default MobileViewSelector;
 
+

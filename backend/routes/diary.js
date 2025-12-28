@@ -102,8 +102,9 @@ router.get('/search', authenticateToken, async (req, res) => {
     }
 
     // Phase 3A: Favorites filter
-    if (favorite === 'true' || favorite === true) {
+    if (favorite === 'true' || favorite === true || favorite === '1') {
       query += ` AND is_favorite = true`;
+      console.log('Applied favorites filter: is_favorite = true');
     }
 
     // Phase 3A: Category filter
@@ -111,6 +112,7 @@ router.get('/search', authenticateToken, async (req, res) => {
       query += ` AND category_id = $${paramIndex}`;
       params.push(parseInt(category_id, 10));
       paramIndex++;
+      console.log('Applied category filter: category_id =', category_id);
     }
 
     // Get total count (before pagination)
@@ -285,8 +287,9 @@ router.get('/', authenticateToken, async (req, res) => {
     }
     
     // Phase 3A: Favorites filter
-    if (favorite === 'true' || favorite === true) {
+    if (favorite === 'true' || favorite === true || favorite === '1') {
       query += ` AND is_favorite = true`;
+      console.log('Applied favorites filter: is_favorite = true');
     }
     
     // Phase 3A: Category filter
@@ -294,6 +297,7 @@ router.get('/', authenticateToken, async (req, res) => {
       query += ` AND category_id = $${paramIndex}`;
       params.push(parseInt(category_id, 10));
       paramIndex++;
+      console.log('Applied category filter: category_id =', category_id);
     }
 
     query += ' ORDER BY date DESC, created_at DESC';

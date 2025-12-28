@@ -44,3 +44,4 @@ ON diary_entries USING GIN(search_vector);
 -- - websearch_to_tsquery is used for user-friendly search (Postgres 11+)
 -- - For older Postgres versions, use plainto_tsquery instead
 
+

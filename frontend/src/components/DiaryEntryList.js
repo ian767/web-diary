@@ -104,27 +104,37 @@ const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily',
     e.stopPropagation(); // Prevent expanding entry when clicking star
     
     // Optimistic update: flip the favorite state immediately
-    const previousFavoriteState = entry.is_favorite;
+    const previousFavoriteState = entry.is_favorite || false;
     const newFavoriteState = !previousFavoriteState;
     
-    // Update UI immediately (optimistic)
+    console.log('Toggling favorite for entry', entry.id, 'from', previousFavoriteState, 'to', newFavoriteState);
+    
+    // Update UI immediately (optimistic) - update the entry object in the array
+    const entryIndex = entries.findIndex(e => e.id === entry.id);
+    if (entryIndex >= 0) {
+      entries[entryIndex].is_favorite = newFavoriteState;
+    }
+    
+    // Also trigger parent update callback if provided
     if (onEntryUpdate) {
       onEntryUpdate(entry.id, { is_favorite: newFavoriteState });
     }
-    // Also update entry in entries array for immediate visual feedback
-    entry.is_favorite = newFavoriteState;
     
     try {
       // Then sync with backend
-      await diaryAPI.toggleFavorite(entry.id);
+      console.log('Calling API to toggle favorite for entry', entry.id);
+      const response = await diaryAPI.toggleFavorite(entry.id);
+      console.log('Favorite toggle API response:', response.data);
     } catch (error) {
       console.error('Error toggling favorite:', error);
       // Revert on error
+      if (entryIndex >= 0) {
+        entries[entryIndex].is_favorite = previousFavoriteState;
+      }
       if (onEntryUpdate) {
         onEntryUpdate(entry.id, { is_favorite: previousFavoriteState });
       }
-      entry.is_favorite = previousFavoriteState;
-      // Optionally show error message to user
+      // Show error message to user
       alert('Failed to update favorite status. Please try again.');
     }
   };

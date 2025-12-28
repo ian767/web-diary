@@ -72,3 +72,4 @@ echo "      - Both devices are on the same WiFi network"
 echo "      - Servers are running: ./server-control.sh status"
 echo ""
 
+
