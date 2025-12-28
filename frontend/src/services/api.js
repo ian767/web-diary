@@ -40,15 +40,18 @@ api.interceptors.response.use(
 );
 
 // Auth API
+// Note: baseURL already includes '/api', so use '/auth' (not '/api/auth')
 export const authAPI = {
   register: (username, email, password) =>
-    api.post('/api/auth/register', { username, email, password }),
+    api.post('/auth/register', { username, email, password }),
   login: (username, password) =>
-    api.post('/api/auth/login', { username, password }),
-  verify: () => api.get('/api/auth/verify'),
+    api.post('/auth/login', { username, password }),
+  verify: () => api.get('/auth/verify'),
 };
 
 // Diary API
+// Note: baseURL already includes '/api', so use '/diary' (not '/api/diary')
+// Backend routes are mounted at /api/diary, so this results in /api/diary
 export const diaryAPI = {
   getEntries: (params) => api.get('/diary', { params }),
   getEntry: (id) => api.get(`/diary/${id}`),

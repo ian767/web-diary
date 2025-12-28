@@ -39,10 +39,14 @@ const EditEntry = () => {
     try {
       setError('');
       await diaryAPI.updateEntry(id, data, data.files);
-      // Navigate back to return path (or Home)
+      // Success - navigate back to return path (or Home)
       navigate(returnPath);
     } catch (err) {
-      setError(err.response?.data?.error || 'Error saving entry');
+      // Show detailed error message
+      const errorMessage = err.response?.data?.error || err.message || 'Error saving entry';
+      setError(errorMessage);
+      console.error('Error saving entry:', err);
+      // Keep form open so user can fix and retry
     }
   };
 

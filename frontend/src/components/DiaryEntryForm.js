@@ -15,6 +15,7 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     entry?.attachments?.filter(a => a.type !== 'sticker') || []
   ); // Existing attachments (photos/documents)
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const filesRef = useRef(files);
   const contentTextareaRef = useRef(null);
   
@@ -158,49 +159,65 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.date) {
       setError('Date is required');
       return;
     }
 
-    // Prepare deleted attachments (existing attachments that were removed)
-    const deletedAttachments = entry?.attachments
-      ?.filter(att => att.type !== 'sticker' && !existingAttachments.find(ea => ea.id === att.id))
-      .map(att => att.id) || [];
+    if (isSubmitting) {
+      return; // Prevent double submission
+    }
 
-    // Prepare renamed attachments (only those that actually changed)
-    const renamedAttachments = existingAttachments
-      .filter(att => {
-        // Check if renamed flag is set OR if filename differs from original
-        const isRenamed = att.renamed || (att.originalFilename && att.original_filename !== att.originalFilename);
-        return isRenamed;
-      })
-      .map(att => ({ id: att.id, original_filename: att.original_filename }));
+    setIsSubmitting(true);
+    setError(''); // Clear previous errors
 
-    // Debug logging
-    console.log('Submitting entry update:');
-    console.log('- Deleted attachments:', deletedAttachments);
-    console.log('- Renamed attachments:', renamedAttachments);
-    console.log('- New files:', files.length);
+    try {
+      // Prepare deleted attachments (existing attachments that were removed)
+      const deletedAttachments = entry?.attachments
+        ?.filter(att => att.type !== 'sticker' && !existingAttachments.find(ea => ea.id === att.id))
+        .map(att => att.id) || [];
 
-    // Prepare files with custom names for new uploads
-    // files array already contains { file: File, customName: string, preview: string } objects
-    const filesToUpload = files.length > 0 ? files : null;
+      // Prepare renamed attachments (only those that actually changed)
+      const renamedAttachments = existingAttachments
+        .filter(att => {
+          // Check if renamed flag is set OR if filename differs from original
+          const isRenamed = att.renamed || (att.originalFilename && att.original_filename !== att.originalFilename);
+          return isRenamed;
+        })
+        .map(att => ({ id: att.id, original_filename: att.original_filename }));
 
-    onSubmit({
-      ...formData,
-      files: filesToUpload,
-      existingAttachments: existingAttachments.map(att => ({
-        id: att.id,
-        type: att.type,
-        url: att.url,
-        original_filename: att.original_filename,
-      })),
-      deletedAttachments: deletedAttachments.length > 0 ? deletedAttachments : null,
-      renamedAttachments: renamedAttachments.length > 0 ? renamedAttachments : null,
-    });
+      // Debug logging
+      console.log('Submitting entry update:');
+      console.log('- Deleted attachments:', deletedAttachments);
+      console.log('- Renamed attachments:', renamedAttachments);
+      console.log('- New files:', files.length);
+
+      // Prepare files with custom names for new uploads
+      // files array already contains { file: File, customName: string, preview: string } objects
+      const filesToUpload = files.length > 0 ? files : null;
+
+      // Call onSubmit (which is async in parent)
+      await onSubmit({
+        ...formData,
+        files: filesToUpload,
+        existingAttachments: existingAttachments.map(att => ({
+          id: att.id,
+          type: att.type,
+          url: att.url,
+          original_filename: att.original_filename,
+        })),
+        deletedAttachments: deletedAttachments.length > 0 ? deletedAttachments : null,
+        renamedAttachments: renamedAttachments.length > 0 ? renamedAttachments : null,
+      });
+      // Reset submitting state on success (parent will close form)
+      setIsSubmitting(false);
+    } catch (err) {
+      // Error handling is done in parent component, but we can set local error as fallback
+      setError(err.message || 'Error submitting form');
+      setIsSubmitting(false);
+    }
   };
 
   const availableStickers = ['😊', '😢', '😡', '😴', '😍', '🤔', '😎', '🥳', '😇', '😋'];
@@ -452,8 +469,15 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <button type="submit" className="submit-btn">
-        {entry ? 'Update Entry' : 'Create Entry'}
+      <button 
+        type="submit" 
+        className="submit-btn" 
+        disabled={isSubmitting}
+      >
+        {isSubmitting 
+          ? (entry ? 'Updating...' : 'Saving...') 
+          : (entry ? 'Update Entry' : 'Create Entry')
+        }
       </button>
     </form>
   );

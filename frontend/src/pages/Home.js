@@ -300,19 +300,27 @@ const Home = ({ onNavigateRef }) => {
 
   const handleEntrySubmit = async (data) => {
     try {
+      setError(''); // Clear any previous errors
       if (editingEntry) {
         await diaryAPI.updateEntry(editingEntry.id, data, data.files);
       } else {
         await diaryAPI.createEntry(data, data.files);
       }
+      // Success - close form and reload data
       setShowEntryForm(false);
       setEditingEntry(null);
-      loadData();
+      await loadData();
       if (view === 'home') {
-        loadOverviewData();
+        await loadOverviewData();
       }
+      // Show success feedback (optional - could add a toast notification here)
+      console.log('Entry saved successfully');
     } catch (err) {
-      setError(err.response?.data?.error || 'Error saving entry');
+      // Show detailed error message
+      const errorMessage = err.response?.data?.error || err.message || 'Error saving entry';
+      setError(errorMessage);
+      console.error('Error saving entry:', err);
+      // Keep form open so user can fix and retry
     }
   };
 
