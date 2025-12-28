@@ -108,8 +108,21 @@ router.get('/search', authenticateToken, async (req, res) => {
 
     // Add ordering and pagination
     if (q && q.trim()) {
-      // Order by relevance (ts_rank) when searching
-      query += ` ORDER BY ts_rank(search_vector, websearch_to_tsquery('english', $${paramIndex - (q ? 1 : 0)})) DESC, date DESC`;
+      const searchTerm = q.trim();
+      const words = searchTerm.split(/\s+/).filter(w => w.length > 0);
+      const prefixQueries = words.map(word => `${word}:*`).join(' & ');
+      const substringPattern = `%${searchTerm}%`;
+      
+      // Order by relevance (ts_rank) when searching, with fallback to date
+      // Use CASE to prioritize exact substring matches
+      query += ` ORDER BY 
+        CASE 
+          WHEN title ILIKE $${paramIndex - 1} THEN 1
+          WHEN content_text ILIKE $${paramIndex - 1} THEN 2
+          ELSE 3
+        END,
+        ts_rank(search_vector, to_tsquery('english', $${paramIndex - 2})) DESC, 
+        date DESC`;
     } else {
       // Order by date when filtering only
       query += ` ORDER BY date DESC, created_at DESC`;
