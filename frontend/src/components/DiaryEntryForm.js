@@ -56,6 +56,23 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     });
   };
 
+  // Handle rich text editor content change
+  const handleContentChange = (htmlContent) => {
+    // Extract plain text from HTML for search indexing
+    const extractPlainText = (html) => {
+      if (!html) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || '';
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      content_html: htmlContent,
+      content_text: extractPlainText(htmlContent),
+    }));
+  };
+
   // Use relative URL for uploads when using proxy (empty string), otherwise remove /api
   // Production: Use REACT_APP_API_BASE_URL, Development: '/api' (proxy)
   const API_URL = process.env.REACT_APP_API_BASE_URL || '/api';
@@ -167,15 +184,6 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     }
   };
 
-  // Extract plain text from HTML for search indexing
-  const extractPlainText = (html) => {
-    if (!html) return '';
-    // Create a temporary div to strip HTML tags
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.date) {
@@ -191,8 +199,8 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     setError(''); // Clear previous errors
 
     try {
-      // Extract plain text from HTML content
-      const content_text = extractPlainText(formData.content_html);
+      // content_text is already updated by handleContentChange
+      const content_text = formData.content_text;
       
       // Prepare deleted attachments (existing attachments that were removed)
       const deletedAttachments = entry?.attachments
