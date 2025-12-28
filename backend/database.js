@@ -143,6 +143,12 @@ class Database {
       // Phase 2: Add full-text search indexing
       await this.setupFullTextSearch(client);
 
+      // Phase 3A: Create categories table
+      await this.createCategoriesTable(client);
+
+      // Phase 3A: Add organization fields (is_favorite, category_id)
+      await this.addOrganizationFields(client);
+
       await client.query('COMMIT');
       console.log('Database tables initialized successfully');
     } catch (err) {

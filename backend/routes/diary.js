@@ -205,6 +205,8 @@ router.get('/search', authenticateToken, async (req, res) => {
         snippet: snippet.trim(),
         mood: entry.mood,
         tags: entry.tags,
+        is_favorite: entry.is_favorite || false,
+        category_id: entry.category_id || null,
         attachmentCount
       };
     }));
@@ -302,6 +304,9 @@ router.get('/', authenticateToken, async (req, res) => {
     // Attach attachments to entries
     entries.forEach(entry => {
       entry.attachments = attachmentsByEntry[entry.id] || [];
+      // Phase 3A: Ensure is_favorite and category_id are included (default to false/null if not set)
+      entry.is_favorite = entry.is_favorite || false;
+      entry.category_id = entry.category_id || null;
     });
 
     res.json(entries);
@@ -735,6 +740,123 @@ router.delete('/:id/attachments/:attachmentId', authenticateToken, async (req, r
   } catch (error) {
     console.error('Error deleting attachment:', error);
     res.status(500).json({ error: 'Error deleting attachment' });
+  }
+});
+
+// Phase 3A: Toggle favorite status
+// PATCH /api/diary/:id/favorite
+router.patch('/:id/favorite', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const pool = database.getPool();
+
+    // Get current favorite status
+    const currentResult = await pool.query(
+      'SELECT is_favorite FROM diary_entries WHERE id = $1 AND user_id = $2',
+      [id, userId]
+    );
+
+    if (currentResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Entry not found' });
+    }
+
+    const currentFavorite = currentResult.rows[0].is_favorite;
+    const newFavorite = !currentFavorite;
+
+    // Update favorite status
+    await pool.query(
+      'UPDATE diary_entries SET is_favorite = $1 WHERE id = $2 AND user_id = $3',
+      [newFavorite, id, userId]
+    );
+
+    res.json({ 
+      message: 'Favorite status updated',
+      is_favorite: newFavorite
+    });
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    res.status(500).json({ error: 'Error toggling favorite' });
+  }
+});
+
+// Phase 3A: Timeline endpoint
+// GET /api/diary/timeline?limit=20&offset=0
+router.get('/timeline', authenticateToken, async (req, res) => {
+  try {
+    const { limit = 20, offset = 0 } = req.query;
+    const userId = req.user.id;
+    const pool = database.getPool();
+
+    // Get total count
+    const countResult = await pool.query(
+      'SELECT COUNT(*) as total FROM diary_entries WHERE user_id = $1',
+      [userId]
+    );
+    const total = parseInt(countResult.rows[0].total, 10);
+
+    // Get entries with minimal fields, ordered by date (newest first)
+    const entriesResult = await pool.query(
+      `SELECT 
+        id, 
+        date as entry_date, 
+        title, 
+        mood, 
+        tags, 
+        is_favorite,
+        category_id,
+        content_text
+      FROM diary_entries 
+      WHERE user_id = $1 
+      ORDER BY date DESC, created_at DESC 
+      LIMIT $2 OFFSET $3`,
+      [userId, parseInt(limit, 10), parseInt(offset, 10)]
+    );
+
+    const entries = entriesResult.rows;
+
+    // Generate snippets and get attachment counts
+    const results = await Promise.all(entries.map(async (entry) => {
+      // Generate snippet from content_text
+      let snippet = '';
+      if (entry.content_text) {
+        snippet = entry.content_text.substring(0, 160);
+        if (entry.content_text.length > 160) {
+          snippet += '...';
+        }
+      } else if (entry.title) {
+        snippet = entry.title;
+      }
+
+      // Get attachment count
+      const attachmentCountResult = await pool.query(
+        'SELECT COUNT(*) as count FROM attachments WHERE diary_entry_id = $1',
+        [entry.id]
+      );
+      const attachmentCount = parseInt(attachmentCountResult.rows[0].count, 10);
+
+      return {
+        id: entry.id,
+        entry_date: entry.entry_date,
+        title: entry.title,
+        snippet: snippet.trim(),
+        mood: entry.mood,
+        tags: entry.tags,
+        is_favorite: entry.is_favorite || false,
+        category_id: entry.category_id,
+        attachmentCount
+      };
+    }));
+
+    res.json({
+      total,
+      limit: parseInt(limit, 10),
+      offset: parseInt(offset, 10),
+      results
+    });
+  } catch (error) {
+    console.error('Error fetching timeline:', error);
+    res.status(500).json({ error: 'Error fetching timeline' });
   }
 });
 

@@ -6,6 +6,7 @@ const database = require('./database');
 const authRoutes = require('./routes/auth');
 const diaryRoutes = require('./routes/diary');
 const taskRoutes = require('./routes/tasks');
+const categoryRoutes = require('./routes/categories');
 const publicRoutes = require('./routes/public');
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/public', publicRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/diary', diaryRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

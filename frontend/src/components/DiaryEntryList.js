@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import ImageLightbox from './ImageLightbox';
 import RichTextDisplay from './RichTextDisplay';
+import { diaryAPI } from '../services/api';
 import './DiaryEntryList.css';
 
 // Production: Use REACT_APP_API_BASE_URL, Development: '/api' (proxy)
@@ -41,7 +42,7 @@ const getWeatherEmoji = (weather) => {
   return weatherEmojis[weather] || '☀️';
 };
 
-const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily' }) => {
+const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily', onEntryUpdate }) => {
   const [lightboxImages, setLightboxImages] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
@@ -98,6 +99,22 @@ const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily' 
     return entry.attachments?.filter(a => a.type === 'photo').length || 0;
   };
 
+  // Phase 3A: Handle favorite toggle
+  const handleFavoriteToggle = async (e, entry) => {
+    e.stopPropagation(); // Prevent expanding entry when clicking star
+    try {
+      await diaryAPI.toggleFavorite(entry.id);
+      // Update local entry state
+      if (onEntryUpdate) {
+        onEntryUpdate(entry.id, { is_favorite: !entry.is_favorite });
+      }
+      // Also update entry in entries array if parent manages it
+      entry.is_favorite = !entry.is_favorite;
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
+
   return (
     <>
       <div className="diary-entry-list" data-view-type={viewType}>
@@ -117,11 +134,22 @@ const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily' 
                 onClick={() => handleEntryHeaderClick(entry.id)}
                 style={{ cursor: 'pointer' }}
               >
-                <div>
-                  <h3>{entry.title || 'Untitled Entry'}</h3>
-                  <p className="entry-date">
-                    {format(new Date(entry.date), 'MMMM dd, yyyy')}
-                  </p>
+                <div className="entry-header-left">
+                  <div>
+                    <h3>{entry.title || 'Untitled Entry'}</h3>
+                    <p className="entry-date">
+                      {format(new Date(entry.date), 'MMMM dd, yyyy')}
+                    </p>
+                  </div>
+                  {/* Phase 3A: Favorite star toggle */}
+                  <button
+                    className={`favorite-btn ${entry.is_favorite ? 'favorited' : ''}`}
+                    onClick={(e) => handleFavoriteToggle(e, entry)}
+                    title={entry.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+                    aria-label={entry.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    {entry.is_favorite ? '⭐' : '☆'}
+                  </button>
                 </div>
                 <div className="entry-badges">
                   {entry.mood && (

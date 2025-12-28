@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { categoriesAPI } from '../services/api';
 import './DiaryEntryForm.css';
 
 const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
@@ -42,7 +43,23 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     mood: entry?.mood || '',
     weather: entry?.weather || '',
     tags: entry?.tags || '',
+    category_id: entry?.category_id || '',
+    is_favorite: entry?.is_favorite || false,
   });
+
+  // Phase 3A: Load categories for selector
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await categoriesAPI.getCategories();
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    };
+    loadCategories();
+  }, []);
   const [files, setFiles] = useState([]); // New files to upload
   const [existingAttachments, setExistingAttachments] = useState(
     entry?.attachments?.filter(a => a.type !== 'sticker') || []
@@ -431,6 +448,33 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
           onChange={handleChange}
           placeholder="e.g., vacation, family, work"
         />
+      </div>
+
+      {/* Phase 3A: Category selector */}
+      <div className="form-group">
+        <label>Category</label>
+        <select
+          name="category_id"
+          value={formData.category_id || ''}
+          onChange={handleChange}
+        >
+          <option value="">No category</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Phase 3A: Favorite checkbox */}
+      <div className="form-group">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={formData.is_favorite || false}
+            onChange={(e) => setFormData({ ...formData, is_favorite: e.target.checked })}
+          />
+          <span>⭐ Mark as favorite</span>
+        </label>
       </div>
 
       <div className="form-group">

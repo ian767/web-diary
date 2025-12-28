@@ -120,6 +120,8 @@ export const diaryAPI = {
       deleteEntry: (id) => api.delete(`/api/diary/${id}`),
       deleteAttachment: (entryId, attachmentId) =>
         api.delete(`/api/diary/${entryId}/attachments/${attachmentId}`),
+      // Phase 3A: Toggle favorite
+      toggleFavorite: (id) => api.patch(`/api/diary/${id}/favorite`),
       // Phase 2: Search endpoint
       searchEntries: (params) => {
         // Build query string from params object
@@ -143,8 +145,17 @@ export const tasksAPI = {
   createTask: (data) => api.post('/api/tasks', data),
   updateTask: (id, data) => api.put(`/api/tasks/${id}`, data),
   deleteTask: (id) => api.delete(`/api/tasks/${id}`),
-  toggleTask: (id) => api.patch(`/api/tasks/${id}/toggle`),
-};
+      toggleTask: (id) => api.patch(`/api/tasks/${id}/toggle`),
+    };
+
+// Categories API
+// Phase 3A: Categories endpoints
+export const categoriesAPI = {
+      getCategories: () => api.get('/api/categories'),
+      createCategory: (name) => api.post('/api/categories', { name }),
+      updateCategory: (id, name) => api.patch(`/api/categories/${id}`, { name }),
+      deleteCategory: (id) => api.delete(`/api/categories/${id}`),
+    };
 
 export default api;
 
