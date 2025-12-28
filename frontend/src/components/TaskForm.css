@@ -1,0 +1,87 @@
+.task-form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.task-form h4 {
+  color: #667eea;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.task-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.task-form .form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.task-form .form-group input,
+.task-form .form-group textarea,
+.task-form .form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.task-form .form-group input:focus,
+.task-form .form-group textarea:focus,
+.task-form .form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.task-form .form-group textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.task-form .cancel-btn {
+  flex: 1;
+  padding: 0.5rem;
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.task-form .cancel-btn:hover {
+  background: #d0d0d0;
+}
+
+.task-form .submit-btn {
+  flex: 1;
+  padding: 0.5rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.task-form .submit-btn:hover {
+  background: #5568d3;
+}
+
+
+

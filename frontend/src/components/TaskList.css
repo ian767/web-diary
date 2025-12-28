@@ -1,0 +1,149 @@
+.task-list {
+  margin-top: 1rem;
+}
+
+.task-list h3 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.task-item {
+  background: white;
+  border-left: 4px solid #667eea;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.task-item:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.task-item.completed {
+  opacity: 0.6;
+  border-left-color: #95a5a6;
+}
+
+.task-item.completed .task-content h4 {
+  text-decoration: line-through;
+}
+
+.task-item.priority-high {
+  border-left-color: #e74c3c;
+}
+
+.task-item.priority-medium {
+  border-left-color: #f39c12;
+}
+
+.task-item.priority-low {
+  border-left-color: #3498db;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.task-content h4 {
+  color: #333;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.task-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.task-due-date {
+  color: #999;
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+}
+
+.priority-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.priority-badge.priority-high {
+  background: #fee;
+  color: #e74c3c;
+}
+
+.priority-badge.priority-medium {
+  background: #fff4e6;
+  color: #f39c12;
+}
+
+.priority-badge.priority-low {
+  background: #e6f3ff;
+  color: #3498db;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.task-action-btn {
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+}
+
+.task-action-btn.edit {
+  background: #f39c12;
+  color: white;
+}
+
+.task-action-btn.edit:hover {
+  background: #e67e22;
+}
+
+.task-action-btn.delete {
+  background: #e74c3c;
+  color: white;
+}
+
+.task-action-btn.delete:hover {
+  background: #c0392b;
+}
+
+.empty-tasks {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  background: white;
+  border-radius: 10px;
+}
+
+
+

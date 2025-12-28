@@ -1,0 +1,130 @@
+.weekly-view-calendar {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.weeks-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.week-block {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.75rem 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.week-block:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+.week-block.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.week-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 55px;
+  flex-shrink: 0;
+}
+
+.week-block.selected .week-label {
+  color: white;
+}
+
+.week-dates {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  flex: 1;
+  text-align: left;
+}
+
+.week-block.selected .week-dates {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.week-entry-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 28px;
+  margin-left: auto;
+}
+
+.week-entry-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0 0.5rem;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.25);
+}
+
+.week-block.selected .week-entry-count {
+  background: rgba(255, 255, 255, 0.35);
+  color: white;
+  box-shadow: none;
+}
+
+.week-entry-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+  opacity: 0.4;
+}
+
+.week-block.selected .week-entry-empty {
+  color: rgba(255, 255, 255, 0.5);
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .week-block {
+    padding: 0.875rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .week-label {
+    min-width: auto;
+  }
+  
+  .week-dates {
+    text-align: left;
+  }
+}
+

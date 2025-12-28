@@ -1,0 +1,378 @@
+.diary-entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.diary-entry-card {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  box-shadow: none;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.diary-entry-card.collapsed {
+  padding: 1.25rem 1.5rem;
+}
+
+.diary-entry-card.expanded {
+  padding: 2.5rem;
+}
+
+.diary-entry-card:hover {
+  border-color: var(--accent);
+}
+
+.diary-entry-card.collapsed:hover {
+  background: var(--bg-hover, rgba(102, 126, 234, 0.05));
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  user-select: none;
+}
+
+.diary-entry-card.collapsed .entry-header {
+  margin-bottom: 0;
+}
+
+.diary-entry-card.expanded .entry-header {
+  margin-bottom: 1.5rem;
+}
+
+.entry-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.entry-header h3 {
+  color: var(--text-primary);
+  font-size: 1.625rem;
+  font-weight: 600;
+  margin-bottom: 0.625rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.entry-date {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.mood-badge {
+  background: var(--accent);
+  color: white;
+  padding: 0.375rem 0.875rem;
+  border-radius: 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.weather-badge {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 0.375rem 0.875rem;
+  border-radius: 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid var(--border-color);
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  justify-content: flex-end;
+}
+
+.tag-badge {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 0.25rem 0.625rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.photo-count-badge {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 0.375rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.entry-expanded-content {
+  animation: expandContent 0.3s ease-out;
+}
+
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.entry-content {
+  color: var(--text-primary);
+  line-height: 1.75;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+
+.diary-entry-card.expanded .entry-content {
+  padding-top: 0;
+}
+
+.entry-attachments {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.entry-photos {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  margin-bottom: 2rem;
+}
+
+.entry-attachments strong {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.attachments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+}
+
+.attachment-item {
+  position: relative;
+}
+
+.attachment-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
+}
+
+.attachment-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent);
+}
+
+.diary-entry-card.expanded .entry-photos .attachment-image {
+  height: 150px;
+}
+
+.diary-entry-card.expanded .entry-photos.thumbnails-only .attachment-image {
+  height: 80px;
+}
+
+/* Weekly view: smaller photos, no content text */
+.diary-entry-card.expanded .entry-photos.thumbnails-only {
+  margin-bottom: 1rem;
+}
+
+.sticker-display {
+  font-size: 3rem;
+  display: block;
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 5px;
+}
+
+.file-display {
+  display: block;
+  padding: 0.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.entry-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.diary-entry-card.collapsed .entry-actions {
+  display: none;
+}
+
+/* Weekly view: Hide edit/delete buttons (scanning/reviewing focus) */
+.diary-entry-list[data-view-type="weekly"] .entry-actions {
+  display: none !important;
+}
+
+.action-btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.view-btn {
+  background: #3498db;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #2980b9;
+}
+
+.edit-btn {
+  background: #f39c12;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #e67e22;
+}
+
+.delete-btn {
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.delete-btn:hover {
+  background: var(--error);
+  color: white;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+}
+
+/* Mobile responsive (<= 480px) */
+@media (max-width: 480px) {
+  .diary-entry-card.collapsed {
+    padding: 1rem;
+  }
+
+  .diary-entry-card.expanded {
+    padding: 1.25rem;
+  }
+
+  .entry-header h3 {
+    font-size: 1.125rem;
+  }
+
+  .entry-date {
+    font-size: 0.8125rem;
+  }
+
+  .entry-badges {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .entry-content {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .entry-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .action-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+
+  .attachments-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .attachment-image {
+    height: 80px;
+  }
+
+  .entry-expanded-content {
+    padding-top: 1rem;
+  }
+}
+
+/* Tablet (481px-768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .diary-entry-card.collapsed {
+    padding: 1.125rem 1.25rem;
+  }
+
+  .diary-entry-card.expanded {
+    padding: 1.5rem;
+  }
+
+  .action-btn {
+    min-height: 44px;
+  }
+}
+
