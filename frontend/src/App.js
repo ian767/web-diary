@@ -4,7 +4,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Login from './components/Login';
 import Home from './pages/Home';
 import EditEntry from './pages/EditEntry';
-import ThemeToggle from './components/ThemeToggle';
 import ThemeSelector from './components/ThemeSelector';
 import Logo from './components/Logo';
 import { authAPI } from './services/api';
@@ -73,8 +72,8 @@ function App() {
                 </button>
                 <Logo onNavigateToHome={homeNavigateRef} />
               </div>
-              <div className="user-info">
-                <ThemeToggle />
+              <div className="app-header-right">
+                <ThemeSelector />
                 <span className="user-welcome">Welcome, {user.username}!</span>
                 <button onClick={handleLogout}>Logout</button>
               </div>
