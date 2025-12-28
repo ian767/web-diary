@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import ImageLightbox from './ImageLightbox';
+import RichTextDisplay from './RichTextDisplay';
 import './MonthlyEntryList.css';
 
 // Production: Use REACT_APP_API_BASE_URL, Development: '/api' (proxy)
@@ -138,14 +139,12 @@ const MonthlyEntryList = ({ entries, onEdit, onDelete }) => {
                   )}
 
                   {/* Content text */}
-                  {entry.content && (
+                  {(entry.content_html || entry.content_text || entry.content) && (
                     <div className="monthly-entry-content">
-                      {entry.content.split('\n').map((line, idx) => (
-                        <React.Fragment key={idx}>
-                          {line}
-                          {idx < entry.content.split('\n').length - 1 && <br />}
-                        </React.Fragment>
-                      ))}
+                      <RichTextDisplay 
+                        htmlContent={entry.content_html} 
+                        plainTextContent={entry.content_text || entry.content} 
+                      />
                     </div>
                   )}
 

@@ -207,6 +207,32 @@ class Database {
           // New installation - file_url is already in CREATE TABLE
         }
       }
+
+      // Check and add content_html column if missing (Phase 1: Rich text editor)
+      const contentHtmlCheck = await client.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='diary_entries' AND column_name='content_html'
+      `);
+      if (contentHtmlCheck.rows.length === 0) {
+        await client.query(`
+          ALTER TABLE diary_entries ADD COLUMN IF NOT EXISTS content_html TEXT
+        `);
+        console.log('Added content_html column to diary_entries');
+      }
+
+      // Check and add content_text column if missing (Phase 1: Rich text editor)
+      const contentTextCheck = await client.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='diary_entries' AND column_name='content_text'
+      `);
+      if (contentTextCheck.rows.length === 0) {
+        await client.query(`
+          ALTER TABLE diary_entries ADD COLUMN IF NOT EXISTS content_text TEXT
+        `);
+        console.log('Added content_text column to diary_entries');
+      }
     } catch (err) {
       console.warn('Warning during column migration:', err.message);
       // Don't fail initialization if migration fails

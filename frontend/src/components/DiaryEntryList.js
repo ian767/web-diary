@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import ImageLightbox from './ImageLightbox';
+import RichTextDisplay from './RichTextDisplay';
 import './DiaryEntryList.css';
 
 // Production: Use REACT_APP_API_BASE_URL, Development: '/api' (proxy)
@@ -175,14 +176,12 @@ const DiaryEntryList = ({ entries, onEdit, onDelete, onView, viewType = 'daily' 
                   )}
 
                   {/* Content text - show in Daily and Weekly views */}
-                  {entry.content && (viewType === 'daily' || viewType === 'weekly') && (
+                  {(entry.content_html || entry.content_text || entry.content) && (viewType === 'daily' || viewType === 'weekly') && (
                     <div className="entry-content">
-                      {entry.content.split('\n').map((line, idx) => (
-                        <React.Fragment key={idx}>
-                          {line}
-                          {idx < entry.content.split('\n').length - 1 && <br />}
-                        </React.Fragment>
-                      ))}
+                      <RichTextDisplay 
+                        htmlContent={entry.content_html} 
+                        plainTextContent={entry.content_text || entry.content} 
+                      />
                     </div>
                   )}
 

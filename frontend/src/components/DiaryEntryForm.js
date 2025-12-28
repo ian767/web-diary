@@ -1,11 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import './DiaryEntryForm.css';
 
 const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
+  // Initialize content_html with entry's content_html, or fallback to content (for backward compatibility)
+  // If entry has plain text content, convert it to HTML paragraphs
+  const getInitialContentHtml = () => {
+    if (entry?.content_html) {
+      return entry.content_html;
+    } else if (entry?.content) {
+      // Convert plain text to HTML paragraphs
+      return entry.content.split('\n').filter(line => line.trim()).map(line => `<p>${line}</p>`).join('');
+    }
+    return '';
+  };
+  
   const [formData, setFormData] = useState({
     date: entry?.date || new Date().toISOString().split('T')[0],
     title: entry?.title || '',
-    content: entry?.content || '',
+    content_html: getInitialContentHtml(),
     mood: entry?.mood || '',
     weather: entry?.weather || '',
     tags: entry?.tags || '',
@@ -17,7 +31,7 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const filesRef = useRef(files);
-  const contentTextareaRef = useRef(null);
+  const quillRef = useRef(null);
   
   // Keep ref in sync with state
   useEffect(() => {
@@ -132,31 +146,34 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
   };
 
   const insertSticker = (sticker) => {
-    const textarea = contentTextareaRef.current;
-    if (textarea) {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const textBefore = formData.content.substring(0, start);
-      const textAfter = formData.content.substring(end);
-      const newContent = textBefore + sticker + textAfter;
-      
-      setFormData({
-        ...formData,
-        content: newContent,
-      });
-      
-      // Set cursor position after inserted sticker
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + sticker.length, start + sticker.length);
-      }, 0);
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      const range = quill.getSelection(true);
+      if (range) {
+        quill.insertText(range.index, sticker);
+        quill.setSelection(range.index + sticker.length);
+      } else {
+        // No selection, append to end
+        const length = quill.getLength();
+        quill.insertText(length - 1, sticker);
+        quill.setSelection(length - 1 + sticker.length);
+      }
     } else {
-      // If textarea not focused, append to end
+      // Fallback: append to content_html
       setFormData({
         ...formData,
-        content: formData.content + sticker,
+        content_html: formData.content_html + sticker,
       });
     }
+  };
+
+  // Extract plain text from HTML for search indexing
+  const extractPlainText = (html) => {
+    if (!html) return '';
+    // Create a temporary div to strip HTML tags
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
   };
 
   const handleSubmit = async (e) => {
@@ -174,6 +191,9 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
     setError(''); // Clear previous errors
 
     try {
+      // Extract plain text from HTML content
+      const content_text = extractPlainText(formData.content_html);
+      
       // Prepare deleted attachments (existing attachments that were removed)
       const deletedAttachments = entry?.attachments
         ?.filter(att => att.type !== 'sticker' && !existingAttachments.find(ea => ea.id === att.id))
@@ -201,6 +221,7 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
       // Call onSubmit (which is async in parent)
       await onSubmit({
         ...formData,
+        content_text, // Include plain text for search indexing
         files: filesToUpload,
         existingAttachments: existingAttachments.map(att => ({
           id: att.id,
@@ -291,13 +312,27 @@ const DiaryEntryForm = ({ entry, onSubmit, onCancel }) => {
               ))}
             </div>
           </div>
-          <textarea
-            ref={contentTextareaRef}
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            rows="10"
+          <ReactQuill
+            ref={quillRef}
+            theme="snow"
+            value={formData.content_html}
+            onChange={handleContentChange}
             placeholder="Write your thoughts here..."
+            modules={{
+              toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link', 'code-block'],
+                ['clean']
+              ],
+            }}
+            formats={[
+              'header',
+              'bold', 'italic', 'underline',
+              'list', 'bullet',
+              'link', 'code-block'
+            ]}
           />
         </div>
       </div>

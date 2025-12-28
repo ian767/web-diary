@@ -67,9 +67,76 @@
   border-color: var(--accent);
 }
 
-.form-group textarea {
-  resize: vertical;
-  min-height: 150px;
+/* Rich text editor (ReactQuill) styling - replaces textarea */
+.content-with-stickers .quill {
+  background: var(--bg-primary);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.content-with-stickers .ql-container {
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  min-height: 200px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+.content-with-stickers .ql-editor {
+  min-height: 200px;
+  color: var(--text-primary);
+}
+
+.content-with-stickers .ql-editor.ql-blank::before {
+  color: var(--text-secondary);
+  font-style: normal;
+}
+
+.content-with-stickers .ql-toolbar {
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: var(--bg-secondary);
+}
+
+.content-with-stickers .ql-container {
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.content-with-stickers .ql-toolbar .ql-stroke {
+  stroke: var(--text-primary);
+}
+
+.content-with-stickers .ql-toolbar .ql-fill {
+  fill: var(--text-primary);
+}
+
+.content-with-stickers .ql-toolbar button:hover,
+.content-with-stickers .ql-toolbar button.ql-active {
+  color: var(--accent);
+}
+
+.content-with-stickers .ql-toolbar button:hover .ql-stroke,
+.content-with-stickers .ql-toolbar button.ql-active .ql-stroke {
+  stroke: var(--accent);
+}
+
+.content-with-stickers .ql-toolbar button:hover .ql-fill,
+.content-with-stickers .ql-toolbar button.ql-active .ql-fill {
+  fill: var(--accent);
+}
+
+/* Code block styling in editor */
+.content-with-stickers .ql-snow .ql-editor pre.ql-syntax {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.75rem;
+  overflow-x: auto;
 }
 
 .file-input-label {

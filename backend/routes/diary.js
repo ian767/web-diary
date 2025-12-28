@@ -160,13 +160,17 @@ router.get('/:id', authenticateToken, async (req, res) => {
 // Create diary entry
 router.post('/', authenticateToken, upload.array('attachments', 10), async (req, res) => {
   try {
-    const { date, title, content, mood, weather, tags, customFilenames, visibility } = req.body;
+    const { date, title, content, content_html, content_text, mood, weather, tags, customFilenames, visibility } = req.body;
     const userId = req.user.id;
     const pool = database.getPool();
 
     if (!date) {
       return res.status(400).json({ error: 'Date is required' });
     }
+    
+    // Phase 1: Prefer content_html/content_text, but support legacy content for backward compatibility
+    const htmlContent = content_html || (content ? `<p>${content.replace(/\n/g, '</p><p>')}</p>` : null);
+    const textContent = content_text || content || null;
 
     // Parse custom filenames if provided
     let customFilenamesMap = {};
@@ -184,10 +188,10 @@ router.post('/', authenticateToken, upload.array('attachments', 10), async (req,
       shareId = crypto.randomBytes(16).toString('hex');
     }
 
-    // Insert diary entry
+    // Insert diary entry (Phase 1: support content_html/content_text)
     const entryResult = await pool.query(
-      'INSERT INTO diary_entries (user_id, date, title, content, mood, weather, tags, visibility, share_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-      [userId, date, title || null, content || null, mood || null, weather || null, tags || null, visibility || 'private', shareId]
+      'INSERT INTO diary_entries (user_id, date, title, content, content_html, content_text, mood, weather, tags, visibility, share_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id',
+      [userId, date, title || null, content || null, htmlContent, textContent, mood || null, weather || null, tags || null, visibility || 'private', shareId]
     );
 
     const entryId = entryResult.rows[0].id;
@@ -267,9 +271,13 @@ router.post('/', authenticateToken, upload.array('attachments', 10), async (req,
 router.put('/:id', authenticateToken, upload.array('attachments', 10), async (req, res) => {
   try {
     const { id } = req.params;
-    const { date, title, content, mood, weather, tags, deletedAttachments, renamedAttachments, visibility, customFilenames } = req.body;
+    const { date, title, content, content_html, content_text, mood, weather, tags, deletedAttachments, renamedAttachments, visibility, customFilenames } = req.body;
     const userId = req.user.id;
     const pool = database.getPool();
+    
+    // Phase 1: Prefer content_html/content_text, but support legacy content for backward compatibility
+    const htmlContent = content_html || (content ? `<p>${content.replace(/\n/g, '</p><p>')}</p>` : null);
+    const textContent = content_text || content || null;
 
     // Parse custom filenames if provided
     let customFilenamesMap = {};

@@ -13,6 +13,7 @@ import MonthlyEntryList from '../components/MonthlyEntryList';
 import TaskList from '../components/TaskList';
 import TaskForm from '../components/TaskForm';
 import ImageLightbox from '../components/ImageLightbox';
+import RichTextDisplay from '../components/RichTextDisplay';
 import MobileDrawer from '../components/MobileDrawer';
 import MobileViewSelector from '../components/MobileViewSelector';
 import MobileActionBar from '../components/MobileActionBar';
@@ -803,12 +804,13 @@ const Home = ({ onNavigateRef }) => {
                     </div>
                   );
                 })()}
-                {todayEntry.content && (
-                  <p className="today-entry-preview">
-                    {todayEntry.content.length > 150
-                      ? `${todayEntry.content.substring(0, 150)}...`
-                      : todayEntry.content}
-                  </p>
+                {(todayEntry.content_html || todayEntry.content_text || todayEntry.content) && (
+                  <div className="today-entry-preview">
+                    <RichTextDisplay 
+                      htmlContent={todayEntry.content_html} 
+                      plainTextContent={todayEntry.content_text || todayEntry.content} 
+                    />
+                  </div>
                 )}
                 <div className="today-entry-actions">
                   <button
