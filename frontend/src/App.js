@@ -58,29 +58,7 @@ function App() {
     <ThemeProvider>
       <Router>
         <div className="app">
-          {user && (
-            <header className="app-header">
-              <div className="app-header-left">
-                <button 
-                  className="mobile-menu-btn"
-                  onClick={() => {
-                    // Toggle drawer - need to pass this to Home component
-                    const event = new CustomEvent('toggleDrawer');
-                    window.dispatchEvent(event);
-                  }}
-                  aria-label="Open menu"
-                >
-                  ☰
-                </button>
-                <Logo />
-              </div>
-              <div className="app-header-right">
-                <ThemeSelector />
-                <span className="user-welcome">Welcome, {user.username}!</span>
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            </header>
-          )}
+          <AppHeader user={user} onLogout={handleLogout} />
           <div className="app-content">
             <Routes>
               <Route

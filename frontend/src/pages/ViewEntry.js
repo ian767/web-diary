@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import Logo from '../components/Logo';
 import RichTextDisplay from '../components/RichTextDisplay';
 import ImageLightbox from '../components/ImageLightbox';
 import { diaryAPI } from '../services/api';
@@ -86,9 +85,6 @@ const ViewEntry = () => {
 
   return (
     <div className="view-entry-page">
-      <div className="view-entry-header-top">
-        <Logo />
-      </div>
       <div className="view-entry-container">
         <div className="view-entry-header">
           <button onClick={() => navigate('/')} className="back-button">

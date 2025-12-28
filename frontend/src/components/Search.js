@@ -90,9 +90,6 @@ const Search = () => {
   return (
     <div className="search-container">
       <div className="search-header">
-        <Link to="/" className="search-logo-link">
-          <Logo />
-        </Link>
         <h2>Search Diary Entries</h2>
       </div>
 

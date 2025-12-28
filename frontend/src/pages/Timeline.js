@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, startOfMonth, isSameMonth } from 'date-fns';
 import { diaryAPI } from '../services/api';
-import Logo from '../components/Logo';
 import './Timeline.css';
 
 /**
@@ -79,7 +78,6 @@ const Timeline = () => {
   return (
     <div className="timeline-page">
       <div className="timeline-header">
-        <Logo />
         <h1>Timeline</h1>
       </div>
 

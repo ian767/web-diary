@@ -4,10 +4,6 @@
   padding: 2rem;
 }
 
-.view-entry-header-top {
-  margin-bottom: 1.5rem;
-}
-
 .view-entry-container {
   background: var(--bg-secondary);
   border-radius: 10px;
