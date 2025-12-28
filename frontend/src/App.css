@@ -114,6 +114,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 10px var(--shadow);
   transition: background 0.3s ease, box-shadow 0.3s ease;
+  align-items: center;
 }
 
 .view-selector button {
@@ -139,6 +140,11 @@
 
 .view-selector button.active:hover {
   background: var(--accent-hover);
+}
+
+.view-selector .search-nav-btn {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .diary-container {
