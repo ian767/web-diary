@@ -80,6 +80,14 @@
 
   .mobile-menu-btn {
     display: flex;
+    background: var(--accent);
+    color: #ffffff;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu-btn:hover {
+    background: var(--accent-hover);
   }
 
   .user-welcome {
@@ -110,22 +118,6 @@
   /* Hide theme selector on very small screens, it's in the drawer */
   .app-header-right .theme-selector {
     display: none;
-  }
-}
-
-/* ============================================
-   TEMPORARY DEBUG: Force mobile menu button visibility
-   TODO: Remove this override after testing
-   ============================================ */
-@media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: block !important;
-    background: #ff0000 !important;
-    color: #ffffff !important;
-    font-size: 2rem !important;
-    z-index: 1000 !important;
-    padding: 1rem !important;
-    border: 3px solid #ffffff !important;
   }
 }
 
