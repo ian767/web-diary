@@ -1,15 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser } from '../utils/auth';
 import { removeAuthToken } from '../utils/auth';
-import { UserContext } from '../components/AppLayout';
 import './Account.css';
 
 const Account = () => {
   const navigate = useNavigate();
-  const contextUser = useContext(UserContext);
-  const authUser = getUser();
-  const user = contextUser || authUser; // Use context user if available, fallback to auth
+  const user = getUser();
   const currentTheme = document.documentElement.dataset.theme || 'light';
 
   const handleLogout = () => {

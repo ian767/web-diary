@@ -30,7 +30,7 @@ const AppLayout = ({ user, onLogout, children }) => {
   };
 
   return (
-    <UserContext.Provider value={user}>
+    <>
       <GlobalNavigationDrawer 
         isOpen={isDrawerOpen} 
         onClose={handleCloseDrawer} 
@@ -42,7 +42,7 @@ const AppLayout = ({ user, onLogout, children }) => {
           {children}
         </div>
       </div>
-    </UserContext.Provider>
+    </>
   );
 };
 
