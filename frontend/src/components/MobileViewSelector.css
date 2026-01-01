@@ -10,13 +10,9 @@
   padding: 0.5rem;
   box-shadow: 0 2px 10px var(--shadow);
   position: relative;
-  /* Fade gradients to indicate scrollability */
-  background-image: 
-    linear-gradient(to right, var(--bg-secondary) 0%, transparent 10px),
-    linear-gradient(to left, var(--bg-secondary) 0%, transparent 10px);
-  background-position: left center, right center;
-  background-repeat: no-repeat;
-  background-size: 20px 100%, 20px 100%;
+  /* Fade gradients to indicate scrollability - overlay on scroll container */
+  mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
 }
 
 .mobile-view-selector::-webkit-scrollbar {
