@@ -61,21 +61,11 @@ const Home = () => {
   // Lightbox state for Home page photos
   const [lightboxImages, setLightboxImages] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // Mobile drawer state
+  // Mobile drawer state (for sidebar content - calendar/filters)
+  // Note: This is separate from the GlobalNavigationDrawer which is controlled by AppLayout
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Categories for filter dropdown
   const [categories, setCategories] = useState([]);
-
-  // Listen for drawer toggle from header hamburger button
-  useEffect(() => {
-    const handleToggleDrawer = () => {
-      setDrawerOpen(prev => !prev);
-    };
-    window.addEventListener('toggleDrawer', handleToggleDrawer);
-    return () => {
-      window.removeEventListener('toggleDrawer', handleToggleDrawer);
-    };
-  }, []);
 
   // Load categories for filter
   useEffect(() => {

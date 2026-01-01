@@ -7,8 +7,7 @@ import EditEntry from './pages/EditEntry';
 import ViewEntry from './pages/ViewEntry';
 import Search from './components/Search';
 import Timeline from './pages/Timeline';
-import AppHeader from './components/AppHeader';
-import GlobalNavigationDrawer from './components/GlobalNavigationDrawer';
+import AppLayout from './components/AppLayout';
 import { authAPI } from './services/api';
 import { getUser, setUser, removeAuthToken } from './utils/auth';
 import './App.css';
@@ -16,7 +15,6 @@ import './App.css';
 function App() {
   const [user, setUserState] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [globalDrawerOpen, setGlobalDrawerOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -35,17 +33,6 @@ function App() {
     };
 
     checkAuth();
-  }, []);
-
-  // Listen for global drawer toggle from header hamburger button
-  useEffect(() => {
-    const handleToggleDrawer = () => {
-      setGlobalDrawerOpen(prev => !prev);
-    };
-    window.addEventListener('toggleDrawer', handleToggleDrawer);
-    return () => {
-      window.removeEventListener('toggleDrawer', handleToggleDrawer);
-    };
   }, []);
 
   const handleLogin = (userData) => {
@@ -70,77 +57,48 @@ function App() {
     <ThemeProvider>
       <Router>
         <div className="app">
-          {user && (
-            <GlobalNavigationDrawer 
-              isOpen={globalDrawerOpen} 
-              onClose={() => setGlobalDrawerOpen(false)} 
-            />
+          {user ? (
+            <AppLayout user={user} onLogout={handleLogout}>
+              <div className="app-content">
+                <Routes>
+                  <Route
+                    path="/login"
+                    element={<Navigate to="/" replace />}
+                  />
+                  <Route
+                    path="/entries/:id"
+                    element={<ViewEntry />}
+                  />
+                  <Route
+                    path="/entries/:id/edit"
+                    element={<EditEntry />}
+                  />
+                  <Route
+                    path="/search"
+                    element={<Search />}
+                  />
+                  <Route
+                    path="/timeline"
+                    element={<Timeline />}
+                  />
+                  <Route
+                    path="/"
+                    element={<Home />}
+                  />
+                </Routes>
+              </div>
+            </AppLayout>
+          ) : (
+            <div className="app-content">
+              <Routes>
+                <Route
+                  path="/login"
+                  element={<Login onLogin={handleLogin} />}
+                />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </Routes>
+            </div>
           )}
-          <AppHeader user={user} onLogout={handleLogout} />
-          <div className="app-content">
-            <Routes>
-              <Route
-                path="/login"
-                element={
-                  user ? (
-                    <Navigate to="/" replace />
-                  ) : (
-                    <Login onLogin={handleLogin} />
-                  )
-                }
-              />
-              <Route
-                path="/entries/:id"
-                element={
-                  user ? (
-                    <ViewEntry />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-              <Route
-                path="/entries/:id/edit"
-                element={
-                  user ? (
-                    <EditEntry />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-              <Route
-                path="/search"
-                element={
-                  user ? (
-                    <Search />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-              <Route
-                path="/timeline"
-                element={
-                  user ? (
-                    <Timeline />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-              <Route
-                path="/"
-                element={
-                  user ? (
-                    <Home />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-            </Routes>
-          </div>
         </div>
       </Router>
     </ThemeProvider>
