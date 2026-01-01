@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, addDays, subMonths, addMonths, subYears, addYears, subWeeks, addWeeks } from 'date-fns';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -24,6 +24,7 @@ import './CalendarDarkMode.css';
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Read view from URL params, default to 'home'
@@ -822,10 +823,10 @@ const Home = () => {
           </button>
           <button
             onClick={() => navigate('/search')}
-            className="search-nav-btn"
+            className={location.pathname === '/search' ? 'active' : ''}
             title="Search"
           >
-            🔍 Search
+            Search
           </button>
         </div>
       </div>

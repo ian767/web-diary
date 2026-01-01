@@ -232,17 +232,41 @@ const Search = () => {
         </button>
       </div>
 
+      {/* Search Feedback Section */}
+      {!loading && !error && (debouncedQuery || fromDate || toDate || mood || tags || favorite || categoryId) && (
+        <div className="search-feedback">
+          <div className="search-results-count">
+            {total > 0 ? (
+              <span>Found {total} {total === 1 ? 'entry' : 'entries'}</span>
+            ) : (
+              <span>No entries found</span>
+            )}
+          </div>
+          <div className="search-active-filters">
+            {debouncedQuery && <span className="filter-tag">Query: "{debouncedQuery}"</span>}
+            {fromDate && <span className="filter-tag">From: {fromDate}</span>}
+            {toDate && <span className="filter-tag">To: {toDate}</span>}
+            {mood && <span className="filter-tag">Mood: {mood}</span>}
+            {tags && <span className="filter-tag">Tags: {tags}</span>}
+            {favorite && <span className="filter-tag">Favorites only</span>}
+            {categoryId && <span className="filter-tag">Category: {categories.find(c => c.id.toString() === categoryId)?.name || categoryId}</span>}
+          </div>
+        </div>
+      )}
+
       {error && <div className="search-error">{error}</div>}
 
-      {loading && <div className="search-loading">Searching...</div>}
+      {loading && (
+        <div className="search-loading">
+          <div className="loading-spinner"></div>
+          <span>Searching...</span>
+        </div>
+      )}
 
       {!loading && !error && (
         <div className="search-results">
           {total > 0 ? (
             <>
-              <div className="results-header">
-                <p>Found {total} {total === 1 ? 'entry' : 'entries'}</p>
-              </div>
               <div className="results-list">
                 {results.map((result) => (
                   <div

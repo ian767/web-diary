@@ -160,10 +160,7 @@ img, video {
   background: var(--accent-hover);
 }
 
-.view-selector .search-nav-btn {
-  flex: 0 0 auto;
-  margin-left: auto;
-}
+/* Search is now inline with other view buttons, no special styling needed */
 
 .diary-container {
   display: grid;
