@@ -187,29 +187,8 @@
   border-color: var(--accent);
 }
 
-.search-error {
-  background: rgba(231, 76, 60, 0.1);
-  color: var(--error);
-  padding: 1rem;
-  border-radius: 5px;
-  border: 1px solid var(--error);
-  margin-bottom: 1rem;
-}
-
-.search-loading {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-secondary);
-}
-
 .search-results {
   margin-top: 2rem;
-}
-
-.results-header {
-  margin-bottom: 1rem;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
 }
 
 .results-list {
