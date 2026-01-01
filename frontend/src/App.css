@@ -110,6 +110,14 @@ img, video {
   margin: 0 auto;
 }
 
+/* Adjust content when desktop navigation is visible */
+@media (min-width: 769px) {
+  .app-content {
+    max-width: none;
+    padding: 2rem;
+  }
+}
+
 /* Mobile responsive app content */
 @media (max-width: 480px) {
   .app-content {

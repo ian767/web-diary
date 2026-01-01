@@ -2,6 +2,11 @@
   width: 100%;
 }
 
+/* Mobile View Selector */
+.search-page .mobile-view-selector-wrapper {
+  display: none;
+}
+
 /* View Selector - Desktop */
 .search-page .desktop-view-selector {
   display: block;
@@ -11,6 +16,13 @@
 }
 
 @media (max-width: 480px) {
+  .search-page .mobile-view-selector-wrapper {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 0 0.75rem;
+    padding-top: 0.75rem;
+  }
+
   .search-page .desktop-view-selector {
     display: none;
   }

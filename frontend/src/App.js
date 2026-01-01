@@ -7,6 +7,8 @@ import EditEntry from './pages/EditEntry';
 import ViewEntry from './pages/ViewEntry';
 import Search from './components/Search';
 import Timeline from './pages/Timeline';
+import Account from './pages/Account';
+import Settings from './pages/Settings';
 import AppLayout from './components/AppLayout';
 import { authAPI } from './services/api';
 import { getUser, setUser, removeAuthToken } from './utils/auth';
@@ -80,6 +82,14 @@ function App() {
                   <Route
                     path="/timeline"
                     element={<Timeline />}
+                  />
+                  <Route
+                    path="/account"
+                    element={<Account />}
+                  />
+                  <Route
+                    path="/settings"
+                    element={<Settings />}
                   />
                   <Route
                     path="/"

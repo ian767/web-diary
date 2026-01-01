@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { diaryAPI, categoriesAPI } from '../services/api';
+import MobileViewSelector from './MobileViewSelector';
 import '../App.css';
 import './Search.css';
 
@@ -141,6 +142,11 @@ const Search = () => {
 
   return (
     <div className="search-page">
+      {/* Mobile View Selector */}
+      <div className="mobile-view-selector-wrapper">
+        <MobileViewSelector view="search" onViewChange={handleViewChange} />
+      </div>
+
       {/* Desktop View Selector */}
       <div className="desktop-view-selector">
         <div className="view-selector">

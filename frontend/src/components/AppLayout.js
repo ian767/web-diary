@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import AppHeader from './AppHeader';
 import GlobalNavigationDrawer from './GlobalNavigationDrawer';
+import DesktopNavigation from './DesktopNavigation';
+import './AppLayout.css';
 
 /**
  * AppLayout Component
- * Manages global layout elements: Header and Navigation Drawer
+ * Manages global layout elements: Header, Navigation Drawer, and Desktop Navigation
  * Handles drawer toggle state and event listeners
  */
 const AppLayout = ({ user, onLogout, children }) => {
@@ -28,14 +30,19 @@ const AppLayout = ({ user, onLogout, children }) => {
   };
 
   return (
-    <>
+    <UserContext.Provider value={user}>
       <GlobalNavigationDrawer 
         isOpen={isDrawerOpen} 
         onClose={handleCloseDrawer} 
       />
       <AppHeader user={user} onLogout={onLogout} />
-      {children}
-    </>
+      <div className="app-layout-container">
+        <DesktopNavigation />
+        <div className="app-layout-main">
+          {children}
+        </div>
+      </div>
+    </UserContext.Provider>
   );
 };
 

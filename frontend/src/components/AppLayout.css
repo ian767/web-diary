@@ -1,0 +1,21 @@
+.app-layout-container {
+  display: flex;
+  min-height: calc(100vh - 64px); /* Full height minus header */
+}
+
+.app-layout-main {
+  flex: 1;
+  min-width: 0; /* Allow flex item to shrink below content size */
+}
+
+/* On mobile, desktop navigation is hidden, so main takes full width */
+@media (max-width: 768px) {
+  .app-layout-container {
+    flex-direction: column;
+  }
+
+  .app-layout-main {
+    width: 100%;
+  }
+}
+
