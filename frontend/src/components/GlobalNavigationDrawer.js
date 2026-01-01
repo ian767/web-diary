@@ -43,26 +43,57 @@ const GlobalNavigationDrawer = ({ isOpen, onClose }) => {
     { path: '/search', label: 'Search', icon: '🔍' },
   ];
 
+  const accountItems = [
+    { path: '/account', label: 'Account', icon: '👤' },
+    { path: '/settings', label: 'Settings', icon: '⚙️' },
+  ];
+
   return (
     <MobileDrawer isOpen={isOpen} onClose={onClose}>
       <div className="global-nav-drawer">
-        <div className="global-nav-title">Navigation</div>
-        
-        <nav className="global-nav-links">
-          {navItems.map((item) => (
-            <button
-              key={item.path}
-              className={`global-nav-link ${isActive(item.path) ? 'active' : ''}`}
-              onClick={() => handleNavClick(item.path)}
-            >
-              <span className="global-nav-icon">{item.icon}</span>
-              <span className="global-nav-label">{item.label}</span>
-            </button>
-          ))}
-        </nav>
+        {/* Account Section */}
+        <div className="global-nav-section">
+          <div className="global-nav-title-wrapper">
+            <div className="global-nav-title">Account</div>
+          </div>
+          <nav className="global-nav-links">
+            {accountItems.map((item) => (
+              <button
+                key={item.path}
+                className={`global-nav-link ${isActive(item.path) ? 'active' : ''}`}
+                onClick={() => handleNavClick(item.path)}
+              >
+                <span className="global-nav-icon">{item.icon}</span>
+                <span className="global-nav-label">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
 
+        {/* Navigation Section */}
+        <div className="global-nav-section">
+          <div className="global-nav-title-wrapper">
+            <div className="global-nav-title">Navigation</div>
+          </div>
+          <nav className="global-nav-links">
+            {navItems.map((item) => (
+              <button
+                key={item.path}
+                className={`global-nav-link ${isActive(item.path) ? 'active' : ''}`}
+                onClick={() => handleNavClick(item.path)}
+              >
+                <span className="global-nav-icon">{item.icon}</span>
+                <span className="global-nav-label">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Theme Section */}
         <div className="global-nav-theme-section">
-          <div className="global-nav-title">Theme</div>
+          <div className="global-nav-title-wrapper">
+            <div className="global-nav-title">Theme</div>
+          </div>
           <div className="global-nav-theme-wrapper">
             <ThemeSelector />
           </div>
