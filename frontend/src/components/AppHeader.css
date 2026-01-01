@@ -33,7 +33,7 @@
 }
 
 .mobile-menu-btn {
-  display: none; /* Hidden on desktop, shown via media query */
+  display: none; /* Hidden on desktop by default */
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -44,12 +44,6 @@
   min-height: 44px;
   border-radius: 4px;
   transition: background 0.2s ease;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-menu-btn:hover {
-  background: var(--bg-hover);
 }
 
 .user-welcome {
@@ -72,18 +66,25 @@
   background: var(--accent-hover);
 }
 
-/* Tablet responsive */
+/* Tablet and mobile responsive */
 @media (max-width: 768px) {
   .app-header {
     padding: 0.75rem 1rem;
   }
 
   .mobile-menu-btn {
-    display: flex;
-    background: var(--accent);
-    color: #ffffff;
+    display: flex !important;
     align-items: center;
     justify-content: center;
+    background: var(--accent);
+    color: #ffffff;
+    padding: 0.5rem;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 4px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
   }
 
   .mobile-menu-btn:hover {
