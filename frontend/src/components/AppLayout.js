@@ -13,7 +13,7 @@ const AppLayout = ({ user, onLogout, children }) => {
   // Listen for 'toggleDrawer' custom event from hamburger button
   useEffect(() => {
     const handleToggleDrawer = () => {
-      console.log('Drawer toggled');
+      console.log("🔄 Drawer toggle event received"); // Add this line to debug
       setIsDrawerOpen(prev => !prev);
     };
 
