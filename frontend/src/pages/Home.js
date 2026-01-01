@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, addDays, subMonths, addMonths, subYears, addYears, subWeeks, addWeeks } from 'date-fns';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -24,7 +24,19 @@ import './CalendarDarkMode.css';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState('home'); // Default to home view
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Read view from URL params, default to 'home'
+  const viewFromUrl = searchParams.get('view') || 'home';
+  const [view, setView] = useState(viewFromUrl);
+  
+  // Sync view state with URL params when URL changes (e.g., from navigation drawer)
+  useEffect(() => {
+    const currentViewFromUrl = searchParams.get('view') || 'home';
+    if (currentViewFromUrl !== view) {
+      setView(currentViewFromUrl);
+    }
+  }, [searchParams, view]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [entries, setEntries] = useState([]);
   const [allWeekEntries, setAllWeekEntries] = useState([]); // Store all week entries for daily view calendar indicators
@@ -459,7 +471,7 @@ const Home = () => {
     setSelectedDate(newDate);
   };
 
-  // Handle view change - reset edit state
+  // Handle view change - reset edit state and update URL
   const handleViewChange = (newView) => {
     if (showEntryForm) {
       setShowEntryForm(false);
@@ -470,6 +482,12 @@ const Home = () => {
       setEditingTask(null);
     }
     setView(newView);
+    // Update URL to reflect view change
+    if (newView === 'home') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ view: newView });
+    }
   };
 
   // Handle month click in yearly view - navigate to monthly view

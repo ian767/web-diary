@@ -1,0 +1,73 @@
+.global-nav-drawer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.global-nav-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.global-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.global-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-align: left;
+  width: 100%;
+  min-height: 44px; /* Minimum tap target size */
+}
+
+.global-nav-link:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.global-nav-link.active {
+  background: var(--accent);
+  color: white;
+}
+
+.global-nav-link.active:hover {
+  background: var(--accent-hover);
+}
+
+.global-nav-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.global-nav-label {
+  flex: 1;
+}
+
+.global-nav-theme-section {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.global-nav-theme-wrapper {
+  padding: 0 0.5rem;
+}
+

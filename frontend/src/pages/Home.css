@@ -21,11 +21,22 @@
   .mobile-view-selector-wrapper {
     display: block;
     margin-bottom: 1rem;
+    padding: 0 0.75rem;
   }
 
   .home-page {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
     padding-bottom: 100px; /* Extra space for mobile action bar */
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .home-section {
+    padding: 1.5rem;
+  }
+
+  .today-section .section-header h2 {
+    font-size: 1.5rem;
   }
 }
 

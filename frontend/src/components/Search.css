@@ -95,6 +95,23 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.3s;
+  min-height: 44px; /* Minimum tap target */
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  min-width: 20px;
+  min-height: 20px;
 }
 
 .clear-filters-btn:hover {
@@ -225,7 +242,7 @@
   font-size: 1.1rem;
 }
 
-/* Mobile responsive */
+/* Tablet responsive */
 @media (max-width: 768px) {
   .search-container {
     padding: 1rem;
@@ -242,6 +259,51 @@
 
   .result-date {
     margin-left: 0;
+  }
+}
+
+/* Phone responsive */
+@media (max-width: 480px) {
+  .search-container {
+    padding: 0.75rem;
+  }
+
+  .search-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .search-filters {
+    padding: 1rem;
+  }
+
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .filter-group label {
+    font-size: 0.875rem;
+  }
+
+  .filter-input,
+  .search-input {
+    font-size: 1rem; /* Prevent zoom on iOS */
+    padding: 0.75rem;
+  }
+
+  .search-result-item {
+    padding: 1rem;
+  }
+
+  .result-title {
+    font-size: 1.1rem;
+  }
+
+  .clear-filters-btn {
+    width: 100%;
+    padding: 0.75rem;
+    min-height: 44px;
+    margin-top: 0.5rem;
   }
 }
 

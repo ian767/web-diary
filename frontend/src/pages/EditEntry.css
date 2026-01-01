@@ -101,4 +101,53 @@
   }
 }
 
+/* Tablet responsive */
+@media (max-width: 768px) {
+  .edit-entry-page {
+    padding: 1rem;
+  }
+
+  .edit-entry-container {
+    padding: 1.5rem;
+  }
+}
+
+/* Phone responsive */
+@media (max-width: 480px) {
+  .edit-entry-page {
+    padding: 0.75rem;
+  }
+
+  .edit-entry-container {
+    padding: 1rem;
+  }
+
+  .edit-entry-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .edit-entry-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .close-edit-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .back-button {
+    padding: 0.625rem 1rem;
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+
+  .error-message {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
 
