@@ -25,10 +25,10 @@
   --bg-tertiary: rgba(255, 255, 255, 0.9);
   --bg-hover: rgba(102, 126, 234, 0.1);
   
-  /* Text colors - improved contrast for accessibility */
-  --text-primary: #111;
-  --text-secondary: #444;
-  --text-muted: #777;
+  /* Text colors - improved contrast for accessibility (WCAG AA compliant) */
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #777777;
   
   /* UI elements */
   --border-color: #e0e0e0;

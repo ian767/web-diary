@@ -18,6 +18,7 @@ import MobileDrawer from '../components/MobileDrawer';
 import MobileViewSelector from '../components/MobileViewSelector';
 import MobileActionBar from '../components/MobileActionBar';
 import CategoryManager from '../components/CategoryManager';
+import OverviewStats from '../components/OverviewStats';
 import { diaryAPI, tasksAPI, categoriesAPI } from '../services/api';
 import './Home.css';
 import './CalendarDarkMode.css';
@@ -103,7 +104,10 @@ const Home = () => {
     totalEntries: 0,
     entriesThisWeek: 0,
     entriesThisMonth: 0,
-    mostCommonMood: null
+    mostCommonMood: null,
+    entriesByMonth: [],
+    moodFrequency: {},
+    tagFrequency: {}
   });
 
   const loadOverviewData = async () => {
@@ -166,11 +170,46 @@ const Home = () => {
         ? Object.keys(moodCounts).reduce((a, b) => moodCounts[a] > moodCounts[b] ? a : b)
         : null;
 
+      // Calculate entries by month (last 12 months)
+      const entriesByMonth = [];
+      const monthCounts = {};
+      allEntries.forEach(entry => {
+        const entryDate = new Date(entry.date);
+        const monthKey = format(entryDate, 'yyyy-MM');
+        monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+      });
+      
+      // Get last 12 months
+      for (let i = 11; i >= 0; i--) {
+        const monthDate = subMonths(today, i);
+        const monthKey = format(monthDate, 'yyyy-MM');
+        entriesByMonth.push({
+          month: monthKey,
+          label: format(monthDate, 'MMM yyyy'),
+          count: monthCounts[monthKey] || 0,
+          date: monthDate
+        });
+      }
+
+      // Calculate tag frequency
+      const tagCounts = {};
+      allEntries.forEach(entry => {
+        if (entry.tags) {
+          const tags = entry.tags.split(',').map(t => t.trim()).filter(t => t);
+          tags.forEach(tag => {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+          });
+        }
+      });
+
       setOverviewStats({
         totalEntries: allEntries.length,
         entriesThisWeek,
         entriesThisMonth,
-        mostCommonMood
+        mostCommonMood,
+        entriesByMonth,
+        moodFrequency: moodCounts,
+        tagFrequency: tagCounts
       });
     } catch (err) {
       console.error('Error loading overview data:', err);
@@ -487,6 +526,27 @@ const Home = () => {
     setView('monthly');
   };
 
+  // Handle overview stat clicks
+  const handleOverviewMonthClick = (date) => {
+    if (date) {
+      setSelectedDate(date);
+      setView('monthly');
+    } else {
+      // Show all entries (navigate to timeline or search)
+      navigate('/timeline');
+    }
+  };
+
+  const handleOverviewMoodClick = (mood) => {
+    setFilters(prev => ({ ...prev, mood }));
+    setView('daily');
+  };
+
+  const handleOverviewTagClick = (tag) => {
+    setFilters(prev => ({ ...prev, tags: tag }));
+    setView('daily');
+  };
+
   // Helper functions for mood/weather emoji
   const getMoodEmoji = (mood) => {
     const moodEmojis = {
@@ -629,9 +689,21 @@ const Home = () => {
               <button className="nav-arrow-button" onClick={() => handleDateChange(subYears(selectedDate, 1))} aria-label="Previous year">
                 ←
               </button>
-              <span className="current-date">
-                {format(selectedDate, 'yyyy')}
-              </span>
+              <select
+                className="year-selector"
+                value={selectedDate.getFullYear()}
+                onChange={(e) => {
+                  const newYear = parseInt(e.target.value, 10);
+                  const newDate = new Date(selectedDate);
+                  newDate.setFullYear(newYear);
+                  handleDateChange(newDate);
+                }}
+                aria-label="Select year"
+              >
+                {[2023, 2024, 2025, 2026, 2027].map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
               <button className="nav-arrow-button" onClick={() => handleDateChange(addYears(selectedDate, 1))} aria-label="Next year">
                 →
               </button>
@@ -990,28 +1062,12 @@ const Home = () => {
             <div className="section-header">
               <h2>Overview</h2>
             </div>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-value">{overviewStats.totalEntries}</div>
-                <div className="stat-label">Total Entries</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-value">{overviewStats.entriesThisWeek}</div>
-                <div className="stat-label">This Week</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-value">{overviewStats.entriesThisMonth}</div>
-                <div className="stat-label">This Month</div>
-              </div>
-              {overviewStats.mostCommonMood && (
-                <div className="stat-card">
-                  <div className="stat-value">
-                    {getMoodEmoji(overviewStats.mostCommonMood)}
-                  </div>
-                  <div className="stat-label">Most Common Mood</div>
-                </div>
-              )}
-            </div>
+            <OverviewStats
+              stats={overviewStats}
+              onMonthClick={handleOverviewMonthClick}
+              onMoodClick={handleOverviewMoodClick}
+              onTagClick={handleOverviewTagClick}
+            />
           </div>
         </div>
       ) : (
