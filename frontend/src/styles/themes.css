@@ -16,17 +16,17 @@
  * - Theme pack structure: { id, name, displayName, variables: {...} }
  */
 
-/* Default theme: Light (Daylight) */
+/* Default theme: Light (Daylight) - White/Black High Contrast */
 :root,
 [data-theme="light"] {
-  /* Background colors */
-  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-secondary: rgba(255, 255, 255, 0.95);
-  --bg-tertiary: rgba(255, 255, 255, 0.9);
-  --bg-hover: rgba(102, 126, 234, 0.1);
+  /* Background colors - clean white/light gray */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #ffffff;
+  --bg-hover: rgba(0, 0, 0, 0.05);
   
-  /* Text colors - improved contrast for accessibility (WCAG AA compliant) */
-  --text-primary: #111111;
+  /* Text colors - high contrast black/gray */
+  --text-primary: #000000;
   --text-secondary: #444444;
   --text-muted: #666666;
   
@@ -35,9 +35,9 @@
   --shadow: rgba(0, 0, 0, 0.1);
   --shadow-hover: rgba(0, 0, 0, 0.15);
   
-  /* Accent colors - richer blue for better visibility on white */
-  --accent: #4a63e7;
-  --accent-hover: #3d53d8;
+  /* Accent colors - clean black/dark gray */
+  --accent: #000000;
+  --accent-hover: #333333;
   
   /* Status colors */
   --error: #e74c3c;
@@ -51,13 +51,13 @@
 
 /* Text selection styling for Daylight theme */
 [data-theme="light"] ::selection {
-  background: #cde2ff;
-  color: #222222;
+  background: #000000;
+  color: #ffffff;
 }
 
 [data-theme="light"] ::-moz-selection {
-  background: #cde2ff;
-  color: #222222;
+  background: #000000;
+  color: #ffffff;
 }
 
 /* Warm theme: Sunset (paper-like / sunset tones) */
