@@ -47,7 +47,8 @@ const DesktopNavigation = () => {
 
   return (
     <nav className="desktop-navigation">
-      <div className="desktop-nav-content">
+      {/* Scrollable Navigation Content */}
+      <div className="desktop-nav-scrollable">
         {/* Account Section */}
         <div className="desktop-nav-section">
           <div className="desktop-nav-title-wrapper">
@@ -85,15 +86,15 @@ const DesktopNavigation = () => {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Theme Section */}
-        <div className="desktop-nav-section desktop-nav-theme-section">
-          <div className="desktop-nav-title-wrapper">
-            <div className="desktop-nav-title">Theme</div>
-          </div>
-          <div className="desktop-nav-theme-wrapper">
-            <ThemeSelector />
-          </div>
+      {/* Pinned Theme Section */}
+      <div className="desktop-nav-section desktop-nav-theme-section">
+        <div className="desktop-nav-title-wrapper">
+          <div className="desktop-nav-title">Theme</div>
+        </div>
+        <div className="desktop-nav-theme-wrapper">
+          <ThemeSelector />
         </div>
       </div>
     </nav>
