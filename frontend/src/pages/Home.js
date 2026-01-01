@@ -1177,6 +1177,7 @@ const Home = () => {
                   selectedDate={selectedDate}
                   entries={entries}
                   onMonthClick={handleYearlyMonthClick}
+                  onYearChange={handleDateChange}
                 />
               ) : (
                 <DiaryEntryList

@@ -39,7 +39,7 @@ const getDominantMood = (monthEntries) => {
   return dominantMood;
 };
 
-const YearlyMonthSummary = ({ selectedDate, entries = [], onMonthClick }) => {
+const YearlyMonthSummary = ({ selectedDate, entries = [], onMonthClick, onYearChange }) => {
   const yearStart = startOfYear(selectedDate);
   const months = eachMonthOfInterval({
     start: yearStart,
@@ -60,10 +60,34 @@ const YearlyMonthSummary = ({ selectedDate, entries = [], onMonthClick }) => {
   const totalEntries = entries.length;
   const monthsWithEntries = Object.keys(entriesByMonth).length;
 
+  const currentYear = selectedDate.getFullYear();
+  const years = [2023, 2024, 2025, 2026, 2027];
+
+  const handleYearChange = (e) => {
+    const newYear = parseInt(e.target.value, 10);
+    if (onYearChange) {
+      const newDate = new Date(selectedDate);
+      newDate.setFullYear(newYear);
+      onYearChange(newDate);
+    }
+  };
+
   return (
     <div className="yearly-month-summary">
       <div className="yearly-summary-header">
-        <h2>{format(selectedDate, 'yyyy')} Overview</h2>
+        <div className="yearly-header-row">
+          <h2>Overview</h2>
+          <select
+            className="yearly-year-selector"
+            value={currentYear}
+            onChange={handleYearChange}
+            aria-label="Select year"
+          >
+            {years.map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
         <div className="yearly-stats">
           <span className="yearly-stat-item">
             <strong>{totalEntries}</strong> entries
