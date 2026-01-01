@@ -79,14 +79,14 @@
   padding: 0 1rem;
 }
 
-/* Improve text contrast in Daylight theme */
+/* Improve text contrast in Daylight theme - ensure WCAG AA compliance */
 [data-theme="light"] .global-nav-link {
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 [data-theme="light"] .global-nav-link:hover {
-  color: #000000;
-  background: rgba(102, 126, 234, 0.08);
+  color: var(--text-primary);
+  background: var(--bg-hover);
 }
 
 [data-theme="light"] .global-nav-link.active {
@@ -94,6 +94,6 @@
 }
 
 [data-theme="light"] .global-nav-title {
-  color: #666666;
+  color: var(--text-muted);
 }
 
