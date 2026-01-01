@@ -3,13 +3,15 @@
 }
 
 /* View Selector - Desktop */
-.desktop-view-selector {
+.search-page .desktop-view-selector {
   display: block;
   margin-bottom: 2rem;
+  padding: 0 2rem;
+  padding-top: 2rem;
 }
 
 @media (max-width: 480px) {
-  .desktop-view-selector {
+  .search-page .desktop-view-selector {
     display: none;
   }
 }
