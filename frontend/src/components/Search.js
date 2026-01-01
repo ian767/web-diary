@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { diaryAPI, categoriesAPI } from '../services/api';
+import '../App.css';
 import './Search.css';
 
 /**
@@ -126,11 +127,67 @@ const Search = () => {
     setCategoryId('');
   };
 
+  const location = useLocation();
+
+  const handleViewChange = (view) => {
+    if (view === 'search') {
+      navigate('/search');
+    } else if (view === 'home') {
+      navigate('/');
+    } else {
+      navigate(`/?view=${view}`);
+    }
+  };
+
   return (
-    <div className="search-container">
-      <div className="search-header">
-        <h2>Search Diary Entries</h2>
+    <div className="search-page">
+      {/* Desktop View Selector */}
+      <div className="desktop-view-selector">
+        <div className="view-selector">
+          <button
+            onClick={() => handleViewChange('home')}
+            className={location.pathname === '/' && !location.search ? 'active' : ''}
+          >
+            Home
+          </button>
+          <button
+            onClick={() => handleViewChange('daily')}
+            className={location.pathname === '/' && location.search === '?view=daily' ? 'active' : ''}
+          >
+            Daily
+          </button>
+          <button
+            onClick={() => handleViewChange('weekly')}
+            className={location.pathname === '/' && location.search === '?view=weekly' ? 'active' : ''}
+          >
+            Weekly
+          </button>
+          <button
+            onClick={() => handleViewChange('monthly')}
+            className={location.pathname === '/' && location.search === '?view=monthly' ? 'active' : ''}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => handleViewChange('yearly')}
+            className={location.pathname === '/' && location.search === '?view=yearly' ? 'active' : ''}
+          >
+            Yearly
+          </button>
+          <button
+            onClick={() => handleViewChange('search')}
+            className={location.pathname === '/search' ? 'active' : ''}
+            title="Search"
+          >
+            Search
+          </button>
+        </div>
       </div>
+
+      <div className="search-container">
+        <div className="search-header">
+          <h2>Search Diary Entries</h2>
+        </div>
 
       <div className="search-filters">
         <div className="search-input-group">

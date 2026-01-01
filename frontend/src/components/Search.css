@@ -1,3 +1,19 @@
+.search-page {
+  width: 100%;
+}
+
+/* View Selector - Desktop */
+.desktop-view-selector {
+  display: block;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 480px) {
+  .desktop-view-selector {
+    display: none;
+  }
+}
+
 .search-container {
   max-width: 900px;
   margin: 0 auto;
